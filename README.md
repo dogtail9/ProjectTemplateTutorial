@@ -58,13 +58,23 @@ Now we will add to a project template whose sole purpose is to run a wizard, whe
 
 *Delete the content of the TemplateContent element in the ProjectTemplateTutorial.Solution.vstemplate file*
 
+![Create blank solution](Images/0030_SolutionProjectTemplate/0040.PNG)
+
+*Change the type attribute of the VSTemplate element in the vstemplate file to ProjectGroup*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0100.PNG)
+
+*Add a category for the project template in the new project dialog*
+
+
+## Solution wizard
+Now we need to add a wizard class where the logic for creating our project template.
+Add a class to the Wizard folder in the VSIXProject, name it SolutionWizard. The SolutionWizard class should implement the IWizard interface.
+Sign all projects in the solution.
 
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0050.PNG)
 
 *Add the references to envdte and Microsoft.VisualStudio.TemplateWizardInterface in the VSIXProject*
-
-Now we need to add a wizard class where the logic for creating our project template.
-Add a class to the Wizard folder in the VSIXProject, name it SolutionWizard. The SolutionWizard class should implement the IWizard interface.
 
 ```CSharp
 using Microsoft.VisualStudio.TemplateWizard;
@@ -108,7 +118,6 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
 *The SolutionWizard class*
 
 Set a breakpoint in the int i = 0; line in the RunFinished method.
-Sign all projects in the solution.
 
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0060.PNG)
 
@@ -123,10 +132,7 @@ Sign all projects in the solution.
 
 *Add the WizardExtension element to VSTemplate element in the vstemplate file*
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0040.PNG)
-
-*Change the type attribute of the VSTemplate element in the vstemplate file to ProjectGroup*
-
+## Assets
 The only thing left to do is to add assets to the VSIXProject. Open the source.extension.vsixmanifest file in the VSIXProject. Add the assets below.
 
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0070.PNG)
@@ -137,9 +143,6 @@ The only thing left to do is to add assets to the VSIXProject. Open the source.e
 
 *Add project template*
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0100.PNG)
-
-*Add a category for the project template in the new project dialog*
 
 Let´s try to create a project with our project template.
 
@@ -155,7 +158,7 @@ Let´s try to create a project with our project template.
 
 *The empty solution created is created*
 
-### Mandatory project template
+## Mandatory project template
 Let´s add the project template for the mandatory project in our project template.
 
 *Add the mandatory project template*
@@ -164,12 +167,12 @@ Let´s add the project template for the mandatory project in our project templat
 
 *Project created*
 
-### Optional project template
+## Optional project template
 Let´s add the project template for the optional project in our project template.
 
 *Add the optional project template*
 
-### Project creation dialog
+## Project creation dialog
 We need a dialog to select the projects to be created.
 
 *Add a CustomControl*
