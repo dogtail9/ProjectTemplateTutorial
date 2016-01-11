@@ -119,6 +119,17 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
 
 Set a breakpoint in the int i = 0; line in the RunFinished method.
 
+## Assets
+The only thing left to do is to add assets to the VSIXProject. Open the source.extension.vsixmanifest file in the VSIXProject. Add the assets below.
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0070.PNG)
+
+*Add assembly*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0080.PNG)
+
+*Add project template*
+
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0060.PNG)
 
 *I use ILSpy to get the strongname of the ProjectTemplate.VSIXProject.dll*
@@ -131,18 +142,6 @@ Set a breakpoint in the int i = 0; line in the RunFinished method.
 ```
 
 *Add the WizardExtension element to VSTemplate element in the vstemplate file*
-
-## Assets
-The only thing left to do is to add assets to the VSIXProject. Open the source.extension.vsixmanifest file in the VSIXProject. Add the assets below.
-
-![Create blank solution](Images/0030_SolutionProjectTemplate/0070.PNG)
-
-*Add assembly*
-
-![Create blank solution](Images/0030_SolutionProjectTemplate/0080.PNG)
-
-*Add project template*
-
 
 Let´s try to create a project with our project template.
 
