@@ -16,7 +16,7 @@ This is a tutorial on how to create a project template with multiple projects, c
 ### Solution
 First we need a solution to add our project to. Open Visual Studio and follow the steps bellow.
 
-![Create blank solution](https://raw.githubusercontent.com/dogtail9/ProjectTemplateTutorial/master/Images/0010_Solution/0010.PNG)
+![Create blank solution](Images/0010_Solution/0010.PNG)
 
 *Choose the blank solution project template*
 
@@ -25,11 +25,11 @@ Now we have our solution that we can start adding project to.
 ### VSIX Project
 The VSIX project where we will put all logic such as wizards, commands and dialogs. 
 
-![Create blank solution](https://raw.githubusercontent.com/dogtail9/ProjectTemplateTutorial/master/Images/0020_VSIX/0010.PNG)
+![Create blank solution](Images/0020_VSIX/0010.PNG)
 
 *Add a VSIX Project to the solution*
 
-![Create blank solution](https://raw.githubusercontent.com/dogtail9/ProjectTemplateTutorial/master/Images/0020_VSIX/0020.PNG)
+![Create blank solution](Images/0020_VSIX/0020.PNG)
 
 *Delete the unnecessary files*
 
