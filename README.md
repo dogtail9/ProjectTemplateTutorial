@@ -162,7 +162,7 @@ We are done with the first step out of this tutorial.
 
 ## Mandatory project template
 Let´s add the project template for the mandatory project in our project template.
-If you skiped the first step in this tutorial you can download the code from the [Solution](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release an start the tutorial here.  
+If you skiped the first step in this tutorial you can download the code from the [Solution](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
 *Add the mandatory project template*
 
