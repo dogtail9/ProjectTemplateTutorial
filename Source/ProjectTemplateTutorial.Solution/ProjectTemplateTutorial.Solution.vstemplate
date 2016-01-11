@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" 
+            Type="ProjectGroup" 
+            xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" 
+            xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>ProjectTemplateTutorial.Solution</Name>
+    <Description>ProjectTemplateTutorial.Solution</Description>
+    <Icon>ProjectTemplateTutorial.Solution.ico</Icon>
+    <ProjectType>CSharp</ProjectType>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <SortOrder>1000</SortOrder>
+    <TemplateID>adf242a2-5f8a-473c-bfd1-5c816186219f</TemplateID>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>ProjectTemplateTutorial.Solution</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+  </TemplateData>
+  <TemplateContent>
+  </TemplateContent>
+  <WizardExtension>
+    <Assembly>ProjectTemplateTutorial.VSIXProject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b490d4518b7bc751</Assembly>
+    <FullClassName> ProjectTemplateTutorial.VSIXProject.Wizards.SolutionWizard</FullClassName>
+  </WizardExtension>
+</VSTemplate>
+

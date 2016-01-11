@@ -9,6 +9,7 @@ I have the following softwares installed on my machine.
 * Visual Studio 2015 Update 1
 * Visual Studio SDK
 * [Extensibility Tools for Visual Studio](https://github.com/madskristensen/ExtensibilityTools)
+* [ILSyp](http://ilspy.net/)
 
 ## Create a custom project template
 This is a tutorial on how to create a project template with multiple projects, custom commands and dialogs. We will also add an external tool that generate code from a domain specific language.
@@ -40,43 +41,113 @@ The VSIX project where we will put all logic such as wizards, commands and dialo
 ### Solution Project Template
 This is an empty project template hows porpose is to trigger a wizard where we can add logic to add other project templates to our solution.
 
+![Create blank solution](Images/0030_SolutionProjectTemplate/0010.PNG)
+
 *Add the solution project template*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0020.PNG)
 
 *Delete the unnecessary files*
 
-*Add the solution wizard*
+```xml
+<Project File="ProjectTemplate.csproj" ReplaceParameters="true">
+  <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+  <ProjectItem ReplaceParameters="true" OpenInEditor="true">Class1.cs</ProjectItem>
+</Project>
+```
+
+*Delete the content of the TemplateContent element in the ProjectTemplateTutorial.Solution.vstemplate file*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0050.PNG)
+
+*Add the references to envdte and Microsoft.VisualStudio.TemplateWizardInterface in the VSIXProject*
 
 Now we need to add a wizard class where the logic for creating our project template.
- 
+Add a class to the Wizard folder in the VSIXProject, name it SolutionWizard. The SolutionWizard class should implement the IWizard interface.
+
 ```CSharp
-// usings
+using Microsoft.VisualStudio.TemplateWizard;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using EnvDTE;
 
 namespace ProjectTemplateTutorial.VSIXProject.Wizards
 {
     public class SolutionWizard : IWizard
     {
-        // The rest of the code implementing the IWizard interface
-                
+        public void BeforeOpeningFile(ProjectItem projectItem)
+        {
+        }
+
+        public void ProjectFinishedGenerating(Project project)
+        {
+        }
+
+        public void ProjectItemFinishedGenerating(ProjectItem projectItem)
+        {
+        }
+
         public void RunFinished()
         {
             int i = 0;
         }
+
+        public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
+        {
+        }
+
+        public bool ShouldAddProjectItem(string filePath) => true;
     }
 }
 ```
+
 *The SolutionWizard class*
+
+Set a breakpoint in the int i = 0; line in the RunFinished method.
+Sign all projects in the solution.
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0060.PNG)
+
+*I use ILSpy to get the strongname of the ProjectTemplate.VSIXProject.dll*
 
 ```xml
 <WizardExtension>
-  <Assembly>MultiProjectTemplateTutorial.Wizards, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b490d4518b7bc751</Assembly>
-  <FullClassName>MultiProjectTemplateTutorial.Wizards.SolutionWizard</FullClassName>
+  <Assembly>ProjectTemplateTutorial.VSIXProject, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b490d4518b7bc751</Assembly>
+  <FullClassName> ProjectTemplateTutorial.VSIXProject.Wizards.SolutionWizard</FullClassName>
 </WizardExtension>
 ```
-*Add the WizardExtension element to the vstemplate file*
+*Add the WizardExtension element to VSTemplate element in the vstemplate file*
+
+The only thing left to do is to add assets to the VSIXProject. Open the source.extension.vsixmanifest file in the VSIXProject. Add the assets below.
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0070.PNG)
+
+*Add assembly*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0080.PNG)
+
+*Add project template*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0100.PNG)
 
 *Add a category for the project template in the new project dialog*
 
-*Solution created*
+Let´s try to create a project with our project template.
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0110.PNG)
+
+*The project template is located in the tutorial category in the New Project dialog*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0120.PNG)
+
+*The break point in the RunFinished method should be hit*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0130.PNG)
+
+*The empty solution created is created*
 
 ### Mandatory project template
 Let´s add the project template for the mandatory project in our project template.
