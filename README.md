@@ -1,8 +1,11 @@
 # ProjectTemplateTutorial
-A tutorial on how to create a project template for Visual Studio with multiple projects, commands, dialogs and external tools.
-The project template will have a mandatory and an option project.
+This is a tutorial on how to create a project template for Visual Studio with multiple projects, commands, dialogs and external tools.
+The project template will have a mandatory and an optional project that you can choose from an dialog when the project is created.
+There will also be an item template that uses Text Template Transformation Toolkit (T4) to generate code from an DSL.
 
 ## Prerequisites
+I have the following softwares installed on my machine.
+
 * Visual Studio 2015 Update 1
 * Visual Studio SDK
 * [Extensibility Tools for Visual Studio](https://github.com/madskristensen/ExtensibilityTools)
@@ -13,7 +16,7 @@ This is a tutorial on how to create a project template with multiple projects, c
 ### Solution
 First we need a solution to add our project to. Open Visual Studio and follow the steps bellow.
 
-*File - New - Project*
+![Create blank solution](https://raw.githubusercontent.com/dogtail9/ProjectTemplateTutorial/master/Images/0010_Solution/0010.PNG)
 
 *Choose the blank solution project template*
 
@@ -22,7 +25,15 @@ Now we have our solution that we can start adding project to.
 ### VSIX Project
 The VSIX project where we will put all logic such as wizards, commands and dialogs. 
 
+![Create blank solution](https://raw.githubusercontent.com/dogtail9/ProjectTemplateTutorial/master/Images/0020_VSIX/0010.PNG)
+
 *Add a VSIX Project to the solution*
+
+![Create blank solution](https://raw.githubusercontent.com/dogtail9/ProjectTemplateTutorial/master/Images/0020_VSIX/0020.PNG)
+
+*Delete the unnecessary files*
+
+![Create blank solution](Images/0020_VSIX/0030.PNG)
 
 *Add a folders for Wizards, Dialogs and Commands*
 
