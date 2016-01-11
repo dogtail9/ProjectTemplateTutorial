@@ -36,10 +36,10 @@ The VSIX project where we will put all logic such as wizards, commands and dialo
 
 ![Create blank solution](Images/0020_VSIX/0030.PNG)
 
-*Add a folders for Wizards, Dialogs and Commands*
+*Add folders for Commands, Dialogs and Wizards*
 
-### Solution Project Template
-This is an empty project template hows porpose is to trigger a wizard where we can add logic to add other project templates to our solution.
+## Solution Project Template
+Now we will add to a project template whose sole purpose is to run a wizard, where we can add the code to create our project.
 
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0010.PNG)
 
@@ -57,6 +57,7 @@ This is an empty project template hows porpose is to trigger a wizard where we c
 ```
 
 *Delete the content of the TemplateContent element in the ProjectTemplateTutorial.Solution.vstemplate file*
+
 
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0050.PNG)
 
@@ -119,7 +120,12 @@ Sign all projects in the solution.
   <FullClassName> ProjectTemplateTutorial.VSIXProject.Wizards.SolutionWizard</FullClassName>
 </WizardExtension>
 ```
+
 *Add the WizardExtension element to VSTemplate element in the vstemplate file*
+
+![Create blank solution](Images/0030_SolutionProjectTemplate/0040.PNG)
+
+*Change the type attribute of the VSTemplate element in the vstemplate file to ProjectGroup*
 
 The only thing left to do is to add assets to the VSIXProject. Open the source.extension.vsixmanifest file in the VSIXProject. Add the assets below.
 
