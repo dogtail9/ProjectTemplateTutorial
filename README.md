@@ -130,6 +130,7 @@ The only thing left to do is to add assets to the VSIXProject. Open the source.e
 
 *Add project template*
 
+## Add the wizard to the solution project template
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0060.PNG)
 
 *I use ILSpy to get the strongname of the ProjectTemplate.VSIXProject.dll*
@@ -156,6 +157,8 @@ Let´s try to create a project with our project template.
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0130.PNG)
 
 *The empty solution created is created*
+
+We are done with the first step out of this tutorial.
 
 ## Mandatory project template
 Let´s add the project template for the mandatory project in our project template.
