@@ -38,7 +38,6 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
             string destination = _replacementsDictionary["$destinationdirectory$"];
             string fileName = _replacementsDictionary["$safeprojectname$"] + ".sln";
             _dte.Solution.SaveAs(Path.Combine(destination, fileName));
-
             
             var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
             var templateName = "ProjectTemplateTutorial.Mandatory";
