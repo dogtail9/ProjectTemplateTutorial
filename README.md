@@ -11,7 +11,7 @@ I have the following softwares installed on my machine.
 * [Extensibility Tools for Visual Studio](https://github.com/madskristensen/ExtensibilityTools)
 * [ILSyp](http://ilspy.net/)
 
-If you want to skip some steps of this tutorial you can download the code and start on at this point in the tutorial.
+If you want to skip some parts of the tutorial, you can download the code and start where you want.
 * [Add mandatory project](https://github.com/dogtail9/ProjectTemplateTutorial#mandatory-project-template)
 * [Add optional project](https://github.com/dogtail9/ProjectTemplateTutorial#optional-project-template)
 
