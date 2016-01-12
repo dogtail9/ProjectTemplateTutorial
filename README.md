@@ -11,6 +11,10 @@ I have the following softwares installed on my machine.
 * [Extensibility Tools for Visual Studio](https://github.com/madskristensen/ExtensibilityTools)
 * [ILSyp](http://ilspy.net/)
 
+If you want to skip some steps of this tutorial you can download the code and start on at this point in the tutorial.
+* [Add mandatory project](https://github.com/dogtail9/ProjectTemplateTutorial#mandatory-project-template)
+* [Add optional project](https://github.com/dogtail9/ProjectTemplateTutorial#optional-project-template)
+
 ## Create a custom project template
 This is a tutorial on how to create a project template with multiple projects, custom commands and dialogs. We will also add an external tool that generate code from a domain specific language.
 
