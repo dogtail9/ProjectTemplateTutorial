@@ -43,6 +43,9 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
             var templateName = "ProjectTemplateTutorial.Mandatory";
 
             AddProject(destination, projectName, templateName);
+
+            projectName = $"{_replacementsDictionary["$safeprojectname$"]}.WCFServiceLibrary";
+            AddProject(destination, projectName, "WcfServiceLibrary");
         }
 
         public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)

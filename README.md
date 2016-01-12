@@ -168,6 +168,8 @@ If you skiped the first step in this tutorial you can download the code from the
 
 *Add the mandatory project template*
 
+We want to hide this project template in the New Project dialog and add the project to the solution from the SolutionWizard class.
+
 ```xml
 <Hidden>true</Hidden>
 ```
@@ -181,6 +183,8 @@ If you skiped the first step in this tutorial you can download the code from the
 ![Create blank solution](Images/0040_MandatoryProjectTemplate/0030.PNG)
 
 *Add the Microsoft.VisualStudio.Shell.14.0 NuGet package to the VSIXProject*
+
+Let's write the code to add the mandatory project to the solution. Visual Studio passes a dictionary with data from the New Project dialog to the wizard. We need to save this data and use it to create the mandatory project from our mandatory project template. 
 
 ```CSharp
 private Dictionary<string, string> _replacementsDictionary = new Dictionary<string, string>();
@@ -219,6 +223,8 @@ public void RunFinished()
 
 *Get the data for our project from the replacementsDictionary and pass it to the AddProject method*
 
+We will use the DTE object to add the project to our solution. Later we will refactor this method to a helper library so we can reuse it in other project templates but for now just put the AddProject method in the SolusionWizard class. 
+
 ```CSharp
 private void AddProject(string destination, string projectName, string templateName)
 {
@@ -231,12 +237,30 @@ private void AddProject(string destination, string projectName, string templateN
 
 *Code to add the a project to the solution*
 
+Let's try the project template to se that the mandatory project is created.
+
 ![Create blank solution](Images/0040_MandatoryProjectTemplate/0040.PNG)
 
-*Project created*
+*The mandatory project is created*
+
+You can also add projects and use the build in project template if you like. You find the build in project templates in the *C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\ProjectTemplate*s folder.
+
+```CSharp
+projectName = $"{_replacementsDictionary["$safeprojectname$"]}.WCFServiceLibrary";
+AddProject(destination, projectName, "WcfServiceLibrary");
+```
+
+*Add a WCFServiceLibrary to the solution*
+
+![Create blank solution](Images/0040_MandatoryProjectTemplate/0050.PNG)
+
+*The built-in WCFServiceLibrary template is now added to the solution*
+
+We done with step two of this tutorial. 
 
 ## Optional project template
-Let´s add the project template for the optional project in our project template.
+Let´s add the project template and a dialog for the optional project in our project template.
+If you skiped the second step in this tutorial you can download the code from the [Mandatory](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
 *Add the optional project template*
 
@@ -266,11 +290,14 @@ public void AddProject()
 
 *Project created*
 
+
 ## Add NuGet packages as part of the project creation process
 
 ### NuGet helper code
 
 ### Add NuGet packages
+
+## Helper library
 
 ## Add a command
 
