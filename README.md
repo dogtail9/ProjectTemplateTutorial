@@ -457,7 +457,6 @@ We are done with step three of this tutorial.
 If we want to add NuGet packages to one or more of our projects we can do that by using the IVsPackageInstallerServices i Visual Studio.
 If you skiped the third step in this tutorial you can download the code from the [Optional](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
-
 ### Add NuGet packages
 Add the InstallNuGetPackage method to the SolutionWizard class. 
 In the next step of this tutorial we will refactor this method and the AppProject method to a helper library so we can reuse it in other project templates but for now just put it in the SolusionWizard class.
@@ -517,10 +516,11 @@ private bool InstallNuGetPackage(string projectName, string package)
 
 We are done with step four of this tutorial.
 
-## Refactor a Helper library
+## Refactor some code to a reusable helper library
+Let's clean up our code a bit. We have two methods, AddProcejt and InstallNuGetPackages in the SolutionWizard class that we could reuse in other project templates.
+If you skiped the fourth step in this tutorial you can download the code from the [NuGet](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
 
 ## Solution folders
-
 
 ## Add a command
 
