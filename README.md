@@ -266,33 +266,189 @@ We done with step two of this tutorial.
 Let´s add the project template and a dialog for the optional project in our project template.
 If you skiped the second step in this tutorial you can download the code from the [Mandatory](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
+![Create blank solution](Images/0050_OptionalProjectTemplate/0010.PNG)
+
 *Add the optional project template*
 
-## Project creation dialog
+```xml
+<Hidden>true</Hidden>
+```
+
+*Add the Hidden element to the TemplateData element in the ProjectTemplateTutorial.Mandatory.vstemplate file*
+
+![Create blank solution](Images/0050_OptionalProjectTemplate/0020.PNG)
+
+*Add the mandatory project template as an asset in the VSIXproject*
+
+### Project creation dialog
 We need a dialog to select the projects to be created.
 
-*Add a CustomControl*
+![Create blank solution](Images/0050_OptionalProjectTemplate/0030.PNG)
 
-*Change the root element to Window*
+*Add a User Control (there is no window item temptale but we will fix this)*
 
-*Change the base class in the code behind file to Window*
+We need to change the class from UserControl to a Window class. Visual Studio has a class called DialogWindow in the Microsoft.VisualStudio.PlatformUI namespace that we will use.
 
 ```xml
-<Window>
-</Window>
+ xmlns:platformUI="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
 ```
-*The XAML for the solution dialog*
+
+*Add the Microsoft.VisualStudio.PlatformUI namespace to the XAML file*
+
+![Create blank solution](Images/0050_OptionalProjectTemplate/0060.PNG)
+*Add a reference to System.Xaml in the VSIXProject*
+
+In the XAML file change the root element from UserControl to platformUI:DialogWindow. In the code behind file change the base class from UserControl to DialogWindow.
+
+We need some images to for our SolutionWizardDialog. Use the Image Export Moniker dialog from the extensibility tools to export images for Solution and CSProjectNode.
+
+![Create blank solution](Images/0050_OptionalProjectTemplate/0040.PNG)
+
+*Create a new folder names Resources in the VSIXProject an add the files to that folder*
+ 
+![Create blank solution](Images/0050_OptionalProjectTemplate/0050.PNG)
+ 
+*Change the Build Action for the image files to Resource*
+
+```xml
+<platformUI:DialogWindow x:Class="ProjectTemplateTutorial.VSIXProject.Dialogs.SolutionWizardDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:local="clr-namespace:ProjectTemplateTutorial.VSIXProject.Dialogs"
+             xmlns:platformUI="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
+             Width="370" 
+             Height="210"
+             Title="Create Solution"
+             WindowStartupLocation="CenterScreen" 
+             ResizeMode="NoResize" 
+             ShowInTaskbar="False">
+    <Grid>
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/Solution.png" 
+               Width="15" 
+               Height="15" 
+               VerticalAlignment="Top" 
+               HorizontalAlignment="Left"
+               Margin="10,10,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/CSProjectNode.png" 
+               Width="15" 
+               Height="15"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Margin="33,31,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/CSProjectNode.png" 
+               Width="15"
+               Height="15"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Margin="33,51,0,0"/>
+
+        <TextBlock x:Name="SolutionNameTbx" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Top"
+                   Margin="30,10,10,0" 
+                   Text="SolutionName"/>
+
+        <TextBlock x:Name="MandatoryProjectNameTbx" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Top" 
+                   Margin="53,31,17,0" 
+                   Text="MandatoryProjectName"/>
+
+        <CheckBox x:Name="OptionalProjectNameCbx" 
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Top" 
+                  Margin="53,51,17,0" 
+                  IsChecked="True"
+                  Content="OptionalProjectName" />
+
+        <Button x:Name="CancelBtn" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                Width="75" 
+                Content="Cancel" 
+                Margin="0,0,10,10" 
+                Click="CancelBtn_Click"/>
+
+        <Button x:Name="OKBtn" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                Width="75" 
+                Content="OK" 
+                Margin="0,0,90,10" 
+                Click="OKBtn_Click"/>
+    </Grid>
+</platformUI:DialogWindow>
+```
+
+*The XAML in the SolutionWizardDialog.xaml file*
 
 ```CSharp
-public void AddProject()
+public partial class SolutionWizardDialog : DialogWindow
 {
+    public SolutionWizardDialog(string safeProjectName)
+    {
+        InitializeComponent();
+
+        SolutionNameTbx.Text = $"{safeProjectName}";
+        MandatoryProjectNameTbx.Text = $"{safeProjectName}.Mandatory";
+        OptionalProjectNameCbx.Content = $"{safeProjectName}.Optional";
+    }
+
+    private void OKBtn_Click(object sender, RoutedEventArgs e)
+    {
+        DialogResult = true;
+        Close();
+    }
+
+    private void CancelBtn_Click(object sender, RoutedEventArgs e)
+    {
+        DialogResult = false;
+        Close();
+    }
 }
 ```
-*Code to add the optional project to the solution*
 
-![Dogtail](http://www.dogtail.se/dogtail.gif2)
+*The code in the code behing file*
 
-*Project created*
+Let's open the dialog window when we create our project.
+
+```CSharp
+SolutionWizardDialog dialog = new SolutionWizardDialog(_replacementsDictionary["$safeprojectname$"]);
+var result = dialog.ShowModal();
+
+if (result == null || !result.Value)
+{
+    throw new WizardCancelledException();
+}
+else
+{
+    _addOptionalProject = (bool)dialog.OptionalProjectNameCbx.IsChecked;
+}
+```
+
+*Open the dialog in the RunStarted method of the SolutionWizard class and save the value of the checkbox in the _addOptionalProject field*
+
+```CSharp
+if (_addOptionalProject)
+{
+    projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
+    templateName = "ProjectTemplateTutorial.Optional";
+
+    AddProject(destination, projectName, templateName);
+}
+```
+*Add code to the RunFinished method to add the optional project if the checkbox is checked*
+
+![Create blank solution](Images/0050_OptionalProjectTemplate/0070.PNG)
+
+*The SolutionWizardDialog pops up when you create a new project with the project template*
+
+![Create blank solution](Images/0050_OptionalProjectTemplate/0080.PNG)
+
+*If the checkbox for the optional project is checked the optional project will be created*
 
 
 ## Add NuGet packages as part of the project creation process
@@ -300,6 +456,8 @@ public void AddProject()
 ### NuGet helper code
 
 ### Add NuGet packages
+
+## Solution folders
 
 ## Helper library
 

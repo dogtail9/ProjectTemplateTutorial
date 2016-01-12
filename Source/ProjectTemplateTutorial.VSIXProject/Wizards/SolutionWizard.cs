@@ -8,13 +8,15 @@ using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using System.IO;
 using EnvDTE100;
+using ProjectTemplateTutorial.VSIXProject.Dialogs;
 
 namespace ProjectTemplateTutorial.VSIXProject.Wizards
 {
     public class SolutionWizard : IWizard
     {
         private Dictionary<string, string> _replacementsDictionary = new Dictionary<string, string>();
-        DTE _dte;
+        private DTE _dte;
+        private bool _addOptionalProject;
 
         public SolutionWizard()
         {
@@ -44,13 +46,30 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
 
             AddProject(destination, projectName, templateName);
 
-            projectName = $"{_replacementsDictionary["$safeprojectname$"]}.WCFServiceLibrary";
-            AddProject(destination, projectName, "WcfServiceLibrary");
+            if (_addOptionalProject)
+            {
+                projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
+                templateName = "ProjectTemplateTutorial.Optional";
+
+                AddProject(destination, projectName, templateName);
+            }
         }
 
         public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
         {
             _replacementsDictionary = replacementsDictionary;
+
+            SolutionWizardDialog dialog = new SolutionWizardDialog(_replacementsDictionary["$safeprojectname$"]);
+            var result = dialog.ShowModal();
+
+            if (result == null || !result.Value)
+            {
+                throw new WizardCancelledException();
+            }
+            else
+            {
+                _addOptionalProject = (bool)dialog.OptionalProjectNameCbx.IsChecked;
+            }
         }
 
         public bool ShouldAddProjectItem(string filePath) => true;

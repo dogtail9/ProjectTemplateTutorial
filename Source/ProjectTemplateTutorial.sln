@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectTemplateTutorial.Sol
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectTemplateTutorial.Mandatory", "ProjectTemplateTutorial.Mandatory\ProjectTemplateTutorial.Mandatory.csproj", "{AB60FB9A-4B56-4956-B082-BE3F81ADDC0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectTemplateTutorial.Optional", "ProjectTemplateTutorial.Optional\ProjectTemplateTutorial.Optional.csproj", "{0B790FE8-0A4C-4402-AE05-BE43D4F679B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{AB60FB9A-4B56-4956-B082-BE3F81ADDC0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB60FB9A-4B56-4956-B082-BE3F81ADDC0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB60FB9A-4B56-4956-B082-BE3F81ADDC0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B790FE8-0A4C-4402-AE05-BE43D4F679B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B790FE8-0A4C-4402-AE05-BE43D4F679B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B790FE8-0A4C-4402-AE05-BE43D4F679B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B790FE8-0A4C-4402-AE05-BE43D4F679B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,5 +42,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{0F309A3A-BC2A-4A4C-9A78-57AB35FBC2EB} = {66090E51-1C25-420A-B30B-7ACCA8B273C9}
 		{AB60FB9A-4B56-4956-B082-BE3F81ADDC0B} = {66090E51-1C25-420A-B30B-7ACCA8B273C9}
+		{0B790FE8-0A4C-4402-AE05-BE43D4F679B9} = {66090E51-1C25-420A-B30B-7ACCA8B273C9}
 	EndGlobalSection
 EndGlobal
