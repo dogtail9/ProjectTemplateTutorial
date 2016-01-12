@@ -14,6 +14,7 @@ I have the following softwares installed on my machine.
 If you want to skip some parts of the tutorial, you can download the code and start where you want.
 * [Add mandatory project](https://github.com/dogtail9/ProjectTemplateTutorial#mandatory-project-template)
 * [Add optional project](https://github.com/dogtail9/ProjectTemplateTutorial#optional-project-template)
+* [Add NuGet packages](https://github.com/dogtail9/ProjectTemplateTutorial#nuget-packages)
 
 ## Create a custom project template
 This is a tutorial on how to create a project template with multiple projects, custom commands and dialogs. We will also add an external tool that generate code from a domain specific language.
@@ -260,7 +261,7 @@ AddProject(destination, projectName, "WcfServiceLibrary");
 
 *The built-in WCFServiceLibrary template is now added to the solution*
 
-We done with step two of this tutorial. 
+We are done with step two of this tutorial. 
 
 ## Optional project template
 Let´s add the project template and a dialog for the optional project in our project template.
@@ -450,16 +451,76 @@ if (_addOptionalProject)
 
 *If the checkbox for the optional project is checked the optional project will be created*
 
+We are done with step three of this tutorial. 
 
-## Add NuGet packages as part of the project creation process
+## NuGet packages
+If we want to add NuGet packages to one or more of our projects we can do that by using the IVsPackageInstallerServices i Visual Studio.
+If you skiped the third step in this tutorial you can download the code from the [Optional](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
+
+
+### Add NuGet packages
+Add the InstallNuGetPackage method to the SolutionWizard class. 
+In the next step of this tutorial we will refactor this method and the AppProject method to a helper library so we can reuse it in other project templates but for now just put it in the SolusionWizard class.
+
+![Create blank solution](Images/0060_NuGet/0020.PNG)
+
+*Add a reference to Microsoft.VisualStudio.ComponentModelHost in the VSIXProject*
+
+![Create blank solution](Images/0060_NuGet/0010.PNG)
+
+*Add the NuGet.VisualStudio NuGet package to the VSIXProject*
 
 ### NuGet helper code
 
-### Add NuGet packages
+```CSharp
+private bool InstallNuGetPackage(string projectName, string package)
+{
+    bool installedPkg = true;
+
+    Project project = (from Project p in (Array)_dte.ActiveSolutionProjects
+                       where p.Name.Equals(projectName)
+                       select p).First();
+    try
+    {
+        var componentModel = (IComponentModel)Package.GetGlobalService(typeof(SComponentModel));
+        IVsPackageInstallerServices installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+        if (!installerServices.IsPackageInstalled(project, package))
+        {
+            _dte.StatusBar.Text = @"Installing " + package + " NuGet package, this may take a minute...";
+            IVsPackageInstaller installer = componentModel.GetService<IVsPackageInstaller>();
+            installer.InstallPackage(null, project, package, (System.Version)null, false);
+            _dte.StatusBar.Text = @"Finished installing the " + package + " NuGet package";
+        }
+    }
+    catch (Exception ex)
+    {
+        string t = ex.Message;
+        installedPkg = false;
+        _dte.StatusBar.Text = @"Unable to install the  " + package + " NuGet package";
+    }
+
+    return installedPkg;
+}
+```
+
+*Code that adds a NuGet package to a project*
+
+```CSharp
+ InstallNuGetPackage(projectName, "Newtonsoft.Json");
+```
+
+*Install the Newtonsoft.Json NuGet package*
+
+![Create blank solution](Images/0060_NuGet/0030.PNG)
+
+*Newtonsoft.Json is added to the optional project*
+
+We are done with step four of this tutorial.
+
+## Refactor a Helper library
 
 ## Solution folders
 
-## Helper library
 
 ## Add a command
 
