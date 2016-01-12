@@ -164,9 +164,74 @@ We are done with the first step out of this tutorial.
 Let´s add the project template for the mandatory project in our project template.
 If you skiped the first step in this tutorial you can download the code from the [Solution](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
+![Create blank solution](Images/0040_MandatoryProjectTemplate/0010.PNG)
+
 *Add the mandatory project template*
 
-*Code to add the mandatory project to the solution*
+```xml
+<Hidden>true</Hidden>
+```
+
+*Add the Hidden element to the TemplateData element in the ProjectTemplateTutorial.Mandatory.vstemplate file*
+
+![Create blank solution](Images/0040_MandatoryProjectTemplate/0020.PNG)
+
+*Add the mandatory project template as an asset in the VSIXproject* 
+
+![Create blank solution](Images/0040_MandatoryProjectTemplate/0030.PNG)
+
+*Add the Microsoft.VisualStudio.Shell.14.0 NuGet package to the VSIXProject*
+
+```CSharp
+private Dictionary<string, string> _replacementsDictionary = new Dictionary<string, string>();
+DTE _dte;
+
+public SolutionWizard()
+{
+    _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
+}
+```
+
+*Add constructor and fields to the SolutionWizard class*
+
+```CSharp
+public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
+{
+    _replacementsDictionary = replacementsDictionary;
+}
+```
+
+*Store the replacementsDictionary in the field in the RunStarted method*
+
+```CSharp
+public void RunFinished()
+{
+    string destination = _replacementsDictionary["$destinationdirectory$"];
+    string fileName = _replacementsDictionary["$safeprojectname$"] + ".sln";
+    _dte.Solution.SaveAs(Path.Combine(destination, fileName));
+    
+    var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
+    var templateName = "MultiProjectTemplateTutorial.Mandatory";
+
+    AddProject(destination, projectName, templateName);
+}
+```
+
+*Get the data for our project from the replacementsDictionary and pass it to the AddProject method*
+
+```CSharp
+private void AddProject(string destination, string projectName, string templateName)
+{
+    string projectPath = Path.Combine(destination, projectName);
+    string templatePath = ((Solution4)_dte.Solution).GetProjectTemplate(templateName, "CSharp");
+
+    _dte.Solution.AddFromTemplate(templatePath, projectPath, projectName, false);
+}
+```
+
+*Code to add the a project to the solution*
+
+![Create blank solution](Images/0040_MandatoryProjectTemplate/0040.PNG)
 
 *Project created*
 
