@@ -211,7 +211,7 @@ public void RunFinished()
     _dte.Solution.SaveAs(Path.Combine(destination, fileName));
     
     var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
-    var templateName = "MultiProjectTemplateTutorial.Mandatory";
+    var templateName = "ProjectTemplateTutorial.Mandatory";
 
     AddProject(destination, projectName, templateName);
 }
