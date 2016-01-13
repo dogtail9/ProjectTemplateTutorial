@@ -517,12 +517,306 @@ private bool InstallNuGetPackage(string projectName, string package)
 We are done with step four of this tutorial.
 
 ## Step 5 : Commands
-
-### VSPackage
+Commands are way to implement tools for a particular task in your project template. For example, the developer should be able to create a copyright note in every source code file in a project.
+If you skiped the fourth step in this tutorial you can download the code from the [NuGet](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
 
 ### RelayCommand
+We will create the reusable command class RelayCommand that takes a delegate as a parameter for eventhandlern.
 
-### Implement some usefull feature with a dialog and NuGet packages
+![Create blank solution](Images/0070_Commands/0010.PNG)
+
+*Add the RelayCommand to the Commands folder in the VSIXProject*
+
+![Create blank solution](Images/0070_Commands/0020.PNG)
+
+*Use the Auto-sync VSCT commands feature from the extensibility tools on the vsct file*
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" 
+              xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+
+  <Commands package="guidRelayCommandPackage">
+    <Groups>
+    </Groups>
+
+    <Menus>
+    </Menus>
+
+    <Buttons>
+    </Buttons>
+
+    <Bitmaps>
+      <Bitmap guid="guidImages" 
+              href="Resources\RelayCommand.png" 
+              usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
+    </Bitmaps>
+  </Commands>
+  
+  <CommandPlacements>
+  </CommandPlacements>
+  
+  <Symbols>
+    <GuidSymbol name="guidRelayCommandPackage" value="{edc30286-8947-4257-9355-8d5d25829c5d}" />
+
+    <GuidSymbol name="guidRelayCommandPackageCmdSet" value="{977a44b1-3da7-4b57-9e13-253a15116874}">
+      
+    </GuidSymbol>
+
+    <GuidSymbol name="guidImages" value="{9a4ae56f-11f2-443e-8533-e1c6a67b471d}" >
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>
+```
+
+*Clean up the vsct file and add the Menus and CommandPlacements elements*
+
+```xml
+<GuidSymbol name="guidRelayCommandPackageCmdSet" value="{977a44b1-3da7-4b57-9e13-253a15116874}">
+  <IDSymbol name="ProjectContextGroup" value="0x0100" />
+  <IDSymbol name="ProjectContextMenu" value="0x0200" />
+  <IDSymbol name="ProjectContextMenuGroup" value="0x0300" />
+  <IDSymbol name="RelayCommandMandatory" value="0x0400"/>
+</GuidSymbol>
+```
+
+*Add the IDSymbols for the context menu and button*
+
+```xml
+<Groups>
+  <Group guid="guidRelayCommandPackageCmdSet" id="ProjectContextGroup" priority="0x0000"/>
+  <Group guid="guidRelayCommandPackageCmdSet" id="ProjectContextMenuGroup" priority="0x0000"/>
+</Groups>
+```
+
+*Add the groups*
+
+```xml
+<Menus>
+  <Menu guid="guidRelayCommandPackageCmdSet" id="ProjectContextMenu" type="Context" priority="0x0100">
+    <Strings>
+      <CommandName>Project Template Tutorial</CommandName>
+      <ButtonText>Project Template Tutorial</ButtonText>
+      <MenuText>Project Template Tutorial</MenuText>
+      <ToolTipText>Project Template Tutorial</ToolTipText>
+    </Strings>
+  </Menu>
+</Menus>
+```
+
+*Add the contextmenu*
+
+```xml
+<Buttons>
+  <Button guid="guidRelayCommandPackageCmdSet" id="AddCopyrightCommand" priority="0x0100" type="Button">
+    <Icon guid="guidImages" id="bmpPic1" />
+    <Strings>
+      <ButtonText>Add Copyright Comment</ButtonText>
+    </Strings>
+  </Button>
+</Buttons>
+```
+
+*Add the button*
+
+```xml
+<CommandPlacements>
+  <CommandPlacement guid="guidRelayCommandPackageCmdSet" id="ProjectContextGroup" priority="0x0000">
+    <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
+  </CommandPlacement>
+
+  <CommandPlacement guid="guidRelayCommandPackageCmdSet" id="ProjectContextMenu" priority="0x0100">
+    <Parent guid="guidRelayCommandPackageCmdSet" id="ProjectContextGroup" />
+  </CommandPlacement>
+
+  <CommandPlacement guid="guidRelayCommandPackageCmdSet" id="ProjectContextMenuGroup" priority="0x0100">
+    <Parent guid="guidRelayCommandPackageCmdSet" id="ProjectContextMenu" />
+  </CommandPlacement>
+
+  <CommandPlacement guid="guidRelayCommandPackageCmdSet" id="AddCopyrightCommand" priority="0x0100">
+    <Parent guid="guidRelayCommandPackageCmdSet" id="ProjectContextMenuGroup" />
+  </CommandPlacement>
+</CommandPlacements>
+```
+
+*Add the hirarcy of all symbols to place the button in the context menu and the context menu in the contextmenu of the project*
+
+```CSharp
+internal sealed class RelayCommand
+{
+    private readonly Package package;
+
+    public RelayCommand(Package package, int commandId, Guid commandSet, Action<object, EventArgs> menuCallback, Action<object, EventArgs> beforeQueryStatus = null)
+    {
+        this.package = package;
+
+        OleMenuCommandService commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+        if (commandService != null)
+        {
+            var MenuCommandID = new CommandID(commandSet, commandId);
+            var MenuItem = new OleMenuCommand(menuCallback.Invoke, MenuCommandID);
+            if (beforeQueryStatus != null)
+            {
+                MenuItem.BeforeQueryStatus += beforeQueryStatus.Invoke;
+            }
+            commandService.AddCommand(MenuItem);
+        }
+    }
+
+    private IServiceProvider ServiceProvider => this.package;
+}
+```
+
+```CSharp
+[ProvideAutoLoad("{f1536ef8-92ec-443c-9ed7-fdadf150da82}")]
+[PackageRegistration(UseManagedResourcesOnly = true)]
+[InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
+[ProvideMenuResource("Menus.ctmenu", 1)]
+[Guid(RelayCommandPackage.PackageGuidString)]
+[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
+public sealed class RelayCommandPackage : Package
+{
+    private RelayCommand addCopyrightCommand;
+
+    public const string PackageGuidString = "edc30286-8947-4257-9355-8d5d25829c5d";
+
+    public RelayCommandPackage()
+    {
+   
+    }
+   
+    protected override void Initialize()
+    {
+        addCopyrightCommand = new RelayCommand(this, PackageIds.AddCopyrightCommand, PackageGuids.guidRelayCommandPackageCmdSet,
+            (sender, e) =>
+            {
+                string message = string.Format(CultureInfo.CurrentCulture, "Inside {0}.MenuItemCallback()", this.GetType().FullName);
+                string title = "RelayMenuCommandCallback";
+
+                // Show a message box to prove we were here
+                VsShellUtilities.ShowMessageBox(
+                    ServiceProvider.GlobalProvider,
+                    message,
+                    title,
+                    OLEMSGICON.OLEMSGICON_INFO,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            },
+            (sender, e) =>
+            {
+                var cmd = (OleMenuCommand)sender;
+                cmd.Visible = true;
+            });
+
+        base.Initialize();
+    }
+}
+```
+
+*Initialize the command in the package class. For now the command only shows a message box.*
+
+![Create blank solution](Images/0070_Commands/0030.PNG)
+
+*The command is located in the context menu of the project*
+
+![Create blank solution](Images/0070_Commands/0040.PNG)
+
+*MessageBox shown when the command is tiggered*
+
+### Implement the Add Copyright Comment command
+
+```Csharp
+protected override void Initialize()
+{
+    addCopyrightCommand = new RelayCommand(
+        this, 
+        PackageIds.AddCopyrightCommand, 
+        PackageGuids.guidRelayCommandPackageCmdSet,
+        AddCopyrightComment
+        ,
+        (sender, e) =>
+        {
+            var cmd = (OleMenuCommand)sender;
+            cmd.Visible = true;
+        });
+
+    base.Initialize();
+}
+```
+
+*Change the addCopyrightCommand object initialization*
+
+```CSharp
+private void AddCopyrightComment(object sender, EventArgs e)
+{
+    DTE dte = GetService(typeof(DTE)) as DTE;
+
+    Array projects = (Array)dte.ActiveSolutionProjects;
+    
+    foreach (Project project in projects)
+    {
+        foreach (ProjectItem projectItem in project.ProjectItems)
+        {
+            Document document;
+            try
+            {
+                projectItem.Open();
+                document = projectItem.Document;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("failed to load document");
+                continue;
+            }
+            if (document == null)
+            {
+                continue;
+            }
+
+            TextDocument editDoc = (TextDocument)document.Object("TextDocument");
+            editDoc.
+            if (document.Name.EndsWith(".cs"))
+            {
+                EditPoint objEditPt = editDoc.CreateEditPoint();
+                objEditPt.StartOfDocument();
+                document.ReadOnly = false;
+
+                objEditPt.Insert("//-----------------------------------------------------------------------------");
+                objEditPt.Insert(Environment.NewLine);
+                objEditPt.Insert("// Copyright (c) The Corporation.  All rights reserved.");
+                objEditPt.Insert(Environment.NewLine);
+                objEditPt.Insert("//-----------------------------------------------------------------------------");
+                objEditPt.Insert(Environment.NewLine);
+
+                document.Save(document.FullName);
+            }
+        }
+    }
+}
+```
+
+*Code to add the copyright text to every C# file in a project*
+
+![Create blank solution](Images/0070_Commands/0060.PNG)
+
+*Copyright comment added to code file*
+
+### Manage the visibility of the command with metadata in the project file
+The Add Copyright Comment command is visible in all types of projects in Visual Studio. If the command is of a general nature, it is a desired behavior, but if the command is specific to this particular project template we want to hide the command if the project are not created with our project template.
+
+![Create blank solution](Images/0070_Commands/0050.PNG)
+
+*The command is visible on all project types*
+
+
 
 ## Step 6 : Create a custom item template
 
