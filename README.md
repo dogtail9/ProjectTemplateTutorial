@@ -1,4 +1,4 @@
-# ProjectTemplateTutorial
+# Project Template Tutorial
 This is a tutorial on how to create a project template for Visual Studio with multiple projects, commands, dialogs and external tools.
 The project template will have a mandatory and an optional project that you can choose from an dialog when the project is created.
 There will also be an item template that uses Text Template Transformation Toolkit (T4) to generate code from an DSL.
