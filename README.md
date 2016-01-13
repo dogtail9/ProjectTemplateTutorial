@@ -3,7 +3,7 @@ This is a tutorial on how to create a project template for Visual Studio with mu
 The project template will have a mandatory and an optional project that you can choose from an dialog when the project is created.
 There will also be an item template that uses Text Template Transformation Toolkit (T4) to generate code from an DSL.
 
-## Prerequisites
+## Step 0 : Prerequisites
 I have the following softwares installed on my machine.
 
 * Visual Studio 2015 Update 1
@@ -16,7 +16,7 @@ If you want to skip some parts of the tutorial, you can download the code and st
 * [Add optional project](https://github.com/dogtail9/ProjectTemplateTutorial#optional-project-template)
 * [Add NuGet packages](https://github.com/dogtail9/ProjectTemplateTutorial#nuget-packages)
 
-## Create a custom project template
+## Step 1 : Create a custom project template
 This is a tutorial on how to create a project template with multiple projects, custom commands and dialogs. We will also add an external tool that generate code from a domain specific language.
 
 ### Solution
@@ -43,7 +43,7 @@ The VSIX project where we will put all logic such as wizards, commands and dialo
 
 *Add folders for Commands, Dialogs and Wizards*
 
-## Solution Project Template
+### Solution Project Template
 Now we will add to a project template whose sole purpose is to run a wizard, where we can add the code to create our project.
 
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0010.PNG)
@@ -72,7 +72,7 @@ Now we will add to a project template whose sole purpose is to run a wizard, whe
 *Add a category for the project template in the new project dialog*
 
 
-## Solution wizard
+### Solution wizard
 Now we need to add a wizard class where the logic for creating our project template.
 Add a class to the Wizard folder in the VSIXProject, name it SolutionWizard. The SolutionWizard class should implement the IWizard interface.
 Sign all projects in the solution.
@@ -124,7 +124,7 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
 
 Set a breakpoint in the int i = 0; line in the RunFinished method.
 
-## Assets
+### Assets
 The only thing left to do is to add assets to the VSIXProject. Open the source.extension.vsixmanifest file in the VSIXProject. Add the assets below.
 
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0070.PNG)
@@ -135,7 +135,7 @@ The only thing left to do is to add assets to the VSIXProject. Open the source.e
 
 *Add project template*
 
-## Add the wizard to the solution project template
+### Add the wizard to the solution project template
 ![Create blank solution](Images/0030_SolutionProjectTemplate/0060.PNG)
 
 *I use ILSpy to get the strongname of the ProjectTemplate.VSIXProject.dll*
@@ -165,7 +165,7 @@ Let´s try to create a project with our project template.
 
 We are done with the first step out of this tutorial.
 
-## Mandatory project template
+## Step 2 : Mandatory project template
 Let´s add the project template for the mandatory project in our project template.
 If you skiped the first step in this tutorial you can download the code from the [Solution](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
@@ -263,7 +263,7 @@ AddProject(destination, projectName, "WcfServiceLibrary");
 
 We are done with step two of this tutorial. 
 
-## Optional project template
+## Step 3 : Optional project template
 Let´s add the project template and a dialog for the optional project in our project template.
 If you skiped the second step in this tutorial you can download the code from the [Mandatory](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
@@ -453,7 +453,7 @@ if (_addOptionalProject)
 
 We are done with step three of this tutorial. 
 
-## NuGet packages
+## Step 4 : NuGet packages
 If we want to add NuGet packages to one or more of our projects we can do that by using the IVsPackageInstallerServices i Visual Studio.
 If you skiped the third step in this tutorial you can download the code from the [Optional](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
@@ -469,7 +469,7 @@ In the next step of this tutorial we will refactor this method and the AppProjec
 
 *Add the NuGet.VisualStudio NuGet package to the VSIXProject*
 
-### NuGet helper code
+### Install NuGet packages
 
 ```CSharp
 private bool InstallNuGetPackage(string projectName, string package)
@@ -516,13 +516,7 @@ private bool InstallNuGetPackage(string projectName, string package)
 
 We are done with step four of this tutorial.
 
-## Refactor some code to a reusable helper library
-Let's clean up our code a bit. We have two methods, AddProcejt and InstallNuGetPackages in the SolutionWizard class that we could reuse in other project templates.
-If you skiped the fourth step in this tutorial you can download the code from the [NuGet](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
-
-## Solution folders
-
-## Add a command
+## Step 5 : Commands
 
 ### VSPackage
 
@@ -530,8 +524,14 @@ If you skiped the fourth step in this tutorial you can download the code from th
 
 ### Implement some usefull feature with a dialog and NuGet packages
 
-## Create a custom item template
+## Step 6 : Create a custom item template
 
 ### Item template
 
-### T4 (Text Template Transformation Toolkit) Code Generation 
+### T4 (Text Template Transformation Toolkit) Code Generation
+ 
+## Step 7 : Refactor some code to a reusable helper library
+Let's clean up our code a bit. We have two methods, AddProcejt and InstallNuGetPackages in the SolutionWizard class that we could reuse in other project templates.
+If you skiped the fourth step in this tutorial you can download the code from the [NuGet](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
+
+### Solution folders
