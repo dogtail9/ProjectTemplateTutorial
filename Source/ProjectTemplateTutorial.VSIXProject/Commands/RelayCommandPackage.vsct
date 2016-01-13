@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" 
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"
               xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <Extern href="stdidcmd.h"/>
   <Extern href="vsshlids.h"/>
@@ -24,6 +24,10 @@
     <Buttons>
       <Button guid="guidRelayCommandPackageCmdSet" id="AddCopyrightCommand" priority="0x0100" type="Button">
         <Icon guid="guidImages" id="bmpPic1" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
+        <CommandFlag>DontCache</CommandFlag>
+        <CommandFlag>DefaultInvisible</CommandFlag>
         <Strings>
           <ButtonText>Add Copyright Comment</ButtonText>
         </Strings>
@@ -31,12 +35,12 @@
     </Buttons>
 
     <Bitmaps>
-      <Bitmap guid="guidImages" 
-              href="Resources\RelayCommand.png" 
+      <Bitmap guid="guidImages"
+              href="Resources\RelayCommand.png"
               usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
     </Bitmaps>
   </Commands>
-  
+
   <CommandPlacements>
     <CommandPlacement guid="guidRelayCommandPackageCmdSet" id="ProjectContextGroup" priority="0x0000">
       <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
@@ -54,7 +58,7 @@
       <Parent guid="guidRelayCommandPackageCmdSet" id="ProjectContextMenuGroup" />
     </CommandPlacement>
   </CommandPlacements>
-  
+
   <Symbols>
     <GuidSymbol name="guidRelayCommandPackage" value="{edc30286-8947-4257-9355-8d5d25829c5d}" />
 

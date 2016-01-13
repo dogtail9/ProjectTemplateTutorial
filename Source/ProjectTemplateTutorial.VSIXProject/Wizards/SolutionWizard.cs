@@ -11,6 +11,7 @@ using EnvDTE100;
 using ProjectTemplateTutorial.VSIXProject.Dialogs;
 using Microsoft.VisualStudio.ComponentModelHost;
 using NuGet.VisualStudio;
+using ProjectTemplateTutorial.VSIXProject.Commands;
 
 namespace ProjectTemplateTutorial.VSIXProject.Wizards
 {
@@ -42,18 +43,21 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
             string destination = _replacementsDictionary["$destinationdirectory$"];
             string fileName = _replacementsDictionary["$safeprojectname$"] + ".sln";
             _dte.Solution.SaveAs(Path.Combine(destination, fileName));
-            
+
             var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
             var templateName = "ProjectTemplateTutorial.Mandatory";
 
-            AddProject(destination, projectName, templateName);
+            Project mandatoryPproject = AddProject(destination, projectName, templateName);
+            mandatoryPproject.SetResponsibility(ProjectResponsibilities.Mandatory);
+
 
             if (_addOptionalProject)
             {
                 projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
                 templateName = "ProjectTemplateTutorial.Optional";
 
-                AddProject(destination, projectName, templateName);
+                Project optionalProject = AddProject(destination, projectName, templateName);
+                optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
 
                 InstallNuGetPackage(projectName, "Newtonsoft.Json");
             }
@@ -78,12 +82,18 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
 
         public bool ShouldAddProjectItem(string filePath) => true;
 
-        private void AddProject(string destination, string projectName, string templateName)
+        private Project AddProject(string destination, string projectName, string templateName)
         {
             string projectPath = Path.Combine(destination, projectName);
             string templatePath = ((Solution4)_dte.Solution).GetProjectTemplate(templateName, "CSharp");
 
             _dte.Solution.AddFromTemplate(templatePath, projectPath, projectName, false);
+
+            Project project = (from Project p in _dte.Solution.Projects
+                               where p.Name.Equals(projectName)
+                               select p).FirstOrDefault();
+
+            return project;
         }
 
         private bool InstallNuGetPackage(string projectName, string package)

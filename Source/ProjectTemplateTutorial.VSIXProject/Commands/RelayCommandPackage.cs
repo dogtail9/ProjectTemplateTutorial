@@ -39,15 +39,19 @@ namespace ProjectTemplateTutorial.VSIXProject.Commands
         protected override void Initialize()
         {
             addCopyrightCommand = new RelayCommand(
-                this, 
-                PackageIds.AddCopyrightCommand, 
+                this,
+                PackageIds.AddCopyrightCommand,
                 PackageGuids.guidRelayCommandPackageCmdSet,
-                AddCopyrightComment
-                ,
+                AddCopyrightComment,
                 (sender, e) =>
                 {
+                    DTE dte = GetService(typeof(DTE)) as DTE;
+
+                    Array projects = (Array)dte.ActiveSolutionProjects;
+                    Project current = (Project)projects.GetValue(0);
+
                     var cmd = (OleMenuCommand)sender;
-                    cmd.Visible = true;
+                    cmd.Visible = current.IsProjectResponsible(ProjectResponsibilities.Mandatory);
                 });
 
             base.Initialize();
@@ -58,7 +62,7 @@ namespace ProjectTemplateTutorial.VSIXProject.Commands
             DTE dte = GetService(typeof(DTE)) as DTE;
 
             Array projects = (Array)dte.ActiveSolutionProjects;
-            
+
             foreach (Project project in projects)
             {
                 foreach (ProjectItem projectItem in project.ProjectItems)

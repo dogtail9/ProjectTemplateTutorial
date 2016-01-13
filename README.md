@@ -816,7 +816,157 @@ The Add Copyright Comment command is visible in all types of projects in Visual 
 
 *The command is visible on all project types*
 
+Let's add some metadata to the project file for bot of our projects and only show our command if the user right clicks on the Mandatory project.
+We need two methods, one that sets the metadata on the project and one that checks if the project contains a specific value in the metadata.
 
+![Create blank solution](Images/0070_Commands/0070.PNG)
+
+*Add a class named ProjectExtensions to the Commands folder in the VSIXProject, this class will also be moved to the helper library in the next step.*
+
+```CSharp
+public static class ProjectExtensions
+{
+    public static void SetResponsibility(this Project project, params ProjectResponsibilities[] responsibilities)
+    {
+        foreach (var res in Enum.GetValues(typeof(ProjectResponsibilities)))
+        {
+            string name = res.ToString();
+            project.Globals[name] = Boolean.FalseString;
+            project.Globals.set_VariablePersists(name, true);
+        }
+
+        foreach (var res in responsibilities)
+        {
+            string name = res.ToString();
+            project.Globals[name] = Boolean.TrueString;
+            project.Globals.set_VariablePersists(name, true);
+        }
+    }
+
+    public static bool IsProjectResponsible(this Project project, Enum responsibility)
+    {
+        if (project == null)
+            throw new ArgumentNullException(nameof(project));
+
+        if (project.Globals.get_VariableExists(responsibility.ToString()))
+        {
+            string propertyValue = (string)project.Globals[responsibility.ToString()];
+            bool propertyValueBoolean;
+
+            if (Boolean.TryParse(propertyValue, out propertyValueBoolean))
+            {
+                if (propertyValueBoolean)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+```
+
+*Code to add and check for metadata in a project*
+
+```Charp
+public enum ProjectResponsibilities
+{
+    Mandatory,
+    Optional
+}
+```
+
+*We use an enum for the diferet values of the project metadata*
+
+```CSharp
+private Project AddProject(string destination, string projectName, string templateName)
+{
+    string projectPath = Path.Combine(destination, projectName);
+    string templatePath = ((Solution4)_dte.Solution).GetProjectTemplate(templateName, "CSharp");
+
+    _dte.Solution.AddFromTemplate(templatePath, projectPath, projectName, false);
+
+    Project project = (from Project p in _dte.Solution.Projects
+                       where p.Name.Equals(projectName)
+                       select p).FirstOrDefault();
+
+    return project;
+}
+```
+
+*Modify the AddProject method in the SolutionWizard class. The AddFromTemplate always returns null thats why we need to interate through the project to find the newly created project and return it.* 
+
+```CSharp
+Project mandatoryPproject = AddProject(destination, projectName, templateName);
+mandatoryPproject.SetResponsibility(ProjectResponsibilities.Mandatory);
+
+Project optionalProject = AddProject(destination, projectName, templateName);
+optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
+```
+
+*Set the responsibilities for the projects in the SolutionWizard class*
+
+```xml
+<ProjectExtensions>
+  <VisualStudio>
+    <UserProperties Optional="False" Mandatory="True" />
+  </VisualStudio>
+</ProjectExtensions>
+```
+
+*Metadata in the csproj file for the mandatory project*
+
+```xml
+<Buttons>
+  <Button guid="guidRelayCommandPackageCmdSet" id="AddCopyrightCommand" priority="0x0100" type="Button">
+    <Icon guid="guidImages" id="bmpPic1" />
+    <CommandFlag>DynamicVisibility</CommandFlag>
+    <CommandFlag>TextChanges</CommandFlag>
+    <CommandFlag>DontCache</CommandFlag>
+    <CommandFlag>DefaultInvisible</CommandFlag>
+    <Strings>
+      <ButtonText>Add Copyright Comment</ButtonText>
+    </Strings>
+  </Button>
+</Buttons>
+```
+
+*Add the CommandFlags elements to the Button element in the vsct file in the VSIXProject*
+
+```CSharp
+addCopyrightCommand = new RelayCommand(
+    this,
+    PackageIds.AddCopyrightCommand,
+    PackageGuids.guidRelayCommandPackageCmdSet,
+    AddCopyrightComment,
+    (sender, e) =>
+    {
+        DTE dte = GetService(typeof(DTE)) as DTE;
+
+        Array projects = (Array)dte.ActiveSolutionProjects;
+        Project current = (Project)projects.GetValue(0);
+
+        var cmd = (OleMenuCommand)sender;
+        cmd.Visible = current.IsProjectResponsible(ProjectResponsibilities.Mandatory);
+    });
+```
+
+*Change the command so that it only appears if the project has the Mandatory responsibility*
+
+![Create blank solution](Images/0070_Commands/0080.PNG)
+
+*The Add Copyright Command shows up if you right click the mandatory project*
+
+![Create blank solution](Images/0070_Commands/0090.PNG)
+
+*The Add Copyright Command is hidden if you right click the optional project*
+
+![Create blank solution](Images/0070_Commands/0100.PNG)
+
+*The Add Copyright Command no longer shows up in other project templates*
+
+We are done with the command step of this tutorial.
 
 ## Step 6 : Create a custom item template
 
