@@ -12,9 +12,11 @@ I have the following softwares installed on my machine.
 * [ILSyp](http://ilspy.net/)
 
 If you want to skip some parts of the tutorial, you can download the code and start where you want.
-* [Add mandatory project](https://github.com/dogtail9/ProjectTemplateTutorial#mandatory-project-template)
-* [Add optional project](https://github.com/dogtail9/ProjectTemplateTutorial#optional-project-template)
-* [Add NuGet packages](https://github.com/dogtail9/ProjectTemplateTutorial#nuget-packages)
+* [Step 2 : Mandatory project template](https://github.com/dogtail9/ProjectTemplateTutorial#step-2--mandatory-project-template)
+* [Step 3 : Optional project template](https://github.com/dogtail9/ProjectTemplateTutorial#step-3--optional-project-template)
+* [Step 4 : NuGet packages](https://github.com/dogtail9/ProjectTemplateTutorial#step-4--nuget-packages)
+* [Step 5 : Commands](https://github.com/dogtail9/ProjectTemplateTutorial#step-5--commands)
+
 
 ## Step 1 : Create a custom project template
 This is a tutorial on how to create a project template with multiple projects, custom commands and dialogs. We will also add an external tool that generate code from a domain specific language.
