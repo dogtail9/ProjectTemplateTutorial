@@ -971,6 +971,7 @@ We are done with the command step of this tutorial.
 
 ## Step 6 : Create a custom item template
 
+If you skiped the fifth step in this tutorial you can download the code from the [Commands](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
 ### Item template
 
 ### T4 (Text Template Transformation Toolkit) Code Generation
