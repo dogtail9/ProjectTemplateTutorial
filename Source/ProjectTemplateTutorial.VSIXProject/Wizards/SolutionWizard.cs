@@ -60,6 +60,9 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
                 optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
 
                 InstallNuGetPackage(projectName, "Newtonsoft.Json");
+
+                string templatePath = ((Solution4)_dte.Solution).GetProjectItemTemplate("ProjectTemplateTutorial.ItemTemplate", "CSharp");
+                optionalProject.ProjectItems.AddFromTemplate(templatePath, "Json1.jc");
             }
         }
 
