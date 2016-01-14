@@ -23,13 +23,11 @@ namespace ProjectTemplateTutorial.VSIXProject.Commands
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid(RelayCommandPackage.PackageGuidString)]
+    [Guid(PackageGuids.guidRelayCommandPackageString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     public sealed class RelayCommandPackage : Package
     {
         private RelayCommand addCopyrightCommand;
-
-        public const string PackageGuidString = "edc30286-8947-4257-9355-8d5d25829c5d";
 
         public RelayCommandPackage()
         {

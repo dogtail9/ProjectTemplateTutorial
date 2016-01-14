@@ -587,7 +587,7 @@ We will create the reusable command class RelayCommand that takes a delegate as 
   <IDSymbol name="ProjectContextGroup" value="0x0100" />
   <IDSymbol name="ProjectContextMenu" value="0x0200" />
   <IDSymbol name="ProjectContextMenuGroup" value="0x0300" />
-  <IDSymbol name="RelayCommandMandatory" value="0x0400"/>
+  <IDSymbol name="AddCopyrightCommand" value="0x0400"/>
 </GuidSymbol>
 ```
 
@@ -683,13 +683,11 @@ internal sealed class RelayCommand
 [PackageRegistration(UseManagedResourcesOnly = true)]
 [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
 [ProvideMenuResource("Menus.ctmenu", 1)]
-[Guid(RelayCommandPackage.PackageGuidString)]
+[Guid(PackageGuids.guidRelayCommandPackageString)]
 [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
 public sealed class RelayCommandPackage : Package
 {
     private RelayCommand addCopyrightCommand;
-
-    public const string PackageGuidString = "edc30286-8947-4257-9355-8d5d25829c5d";
 
     public RelayCommandPackage()
     {
@@ -785,7 +783,7 @@ private void AddCopyrightComment(object sender, EventArgs e)
             }
 
             TextDocument editDoc = (TextDocument)document.Object("TextDocument");
-            editDoc.
+            
             if (document.Name.EndsWith(".cs"))
             {
                 EditPoint objEditPt = editDoc.CreateEditPoint();
