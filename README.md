@@ -1028,6 +1028,15 @@ If you skiped the fifth step in this tutorial you can download the code from the
 *The Json1.jc file is created in the project*
 
 ### T4 (Text Template Transformation Toolkit) Code Generation
+
+![Create blank solution](Images/0080_ItemTemplate/0070.PNG)
+
+*Add a reference to Microsoft.VisualStudio.Designer.Interfaces in the VSIXProject*
+
+![Create blank solution](Images/0080_ItemTemplate/0080.PNG)
+
+*Add the Newtonsoft.Json NuGet package to the VSIXProject*
+
 ![Create blank solution](Images/0080_ItemTemplate/0060.PNG)
 
 *Add a Runtime Text Tempalte to the Tools folder in the VSIXProject*
@@ -1110,14 +1119,6 @@ namespace <#= JsonNamespace #>
 ```
 
 *Code to generate a C# class from Json*
-
-![Create blank solution](Images/0080_ItemTemplate/0070.PNG)
-
-*Add a reference to Microsoft.VisualStudio.Designer.Interfaces in the VSIXProject*
-
-![Create blank solution](Images/0080_ItemTemplate/0080.PNG)
-
-*Add the Newtonsoft.Json NuGet package to the VSIXProject*
 
 ```CSharp
 using Microsoft.VisualStudio;
@@ -1314,7 +1315,6 @@ optionalProject.ProjectItems.AddFromTemplate(templatePath, "Json1.jc");
 ![Create blank solution](Images/0080_ItemTemplate/0100.PNG)
 
 *The item tempalte is now added to the optional project by default*
-
  
 ## Step 7 : Refactor some code to a reusable helper library
 Let's clean up our code a bit. We have two methods, AddProcejt and InstallNuGetPackages in the SolutionWizard class that we could reuse in other project templates.
