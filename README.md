@@ -1320,7 +1320,8 @@ optionalProject.ProjectItems.AddFromTemplate(templatePath, "Json1.jc");
 *The item tempalte is now added to the optional project by default when you create a new project*
  
 ## Step 7 : Refactor some code to a reusable helper library
-Let's clean up our code a bit. We have two methods, AddProcejt and InstallNuGetPackages in the SolutionWizard class that we could reuse in other project templates.
-If you skiped the fourth step in this tutorial you can download the code from the [NuGet](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
+Let's clean up our code a bit. We have two methods, AddProject and InstallNuGetPackages in the SolutionWizard class and the RelayCommand class that we could reuse in other project templates. 
+It would also be nice to add the posibility to group project by adding them to solution folders. 
+If you skiped the sixth step in this tutorial you can download the code from the [ItemTemplate](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
 
 ### Solution folders
