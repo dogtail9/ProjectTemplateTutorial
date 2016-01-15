@@ -1,5 +1,6 @@
 ﻿using EnvDTE;
 using EnvDTE100;
+using EnvDTE80;
 using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Shell;
 using NuGet.VisualStudio;
@@ -14,18 +15,28 @@ namespace ProjectTemplateTutorial.Helpers
 {
     public static class DteExtensions
     {
-        public static Project AddProject(this Solution solution, string destination, string projectName, string templateName)
+        public static SolutionFolder AddSolutionFolderEx(this Solution solution, string folderName) => ((Solution4)solution).AddSolutionFolder(folderName).Object;
+
+        public static SolutionFolder AddSolutionFolderEx(this SolutionFolder solutionFolder, string folderName) => solutionFolder.AddSolutionFolder(folderName).Object;
+
+        public static Project AddProject(this Solution solution, string destination, string projectName, string templateName, SolutionFolder solutionFolder = null)
         {
             string projectPath = Path.Combine(destination, projectName);
             string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "CSharp");
 
             solution.AddFromTemplate(templatePath, projectPath, projectName, false);
 
-            Project project = (from Project p in solution.Projects
-                               where p.Name.Equals(projectName)
-                               select p).FirstOrDefault();
+            return GetProject(projectName);
+        }
 
-            return project;
+        public static Project AddProject(this SolutionFolder solutionFolder, string destination, string projectName, string templateName)
+        {
+            string projectPath = Path.Combine(destination, projectName);
+            string templatePath = ((Solution4)solutionFolder.DTE.Solution).GetProjectTemplate(templateName, "CSharp");
+
+            solutionFolder.AddFromTemplate(templatePath, projectPath, projectName);
+            
+            return GetProject(projectName);
         }
 
         public static void AddItem(this Project project, string itemTemplateName, string itemName)
@@ -37,7 +48,7 @@ namespace ProjectTemplateTutorial.Helpers
         public static bool InstallNuGetPackage(this Project project, string packageName)
         {
             bool installedPkg = true;
-            
+
             try
             {
                 var componentModel = (IComponentModel)Package.GetGlobalService(typeof(SComponentModel));
@@ -93,6 +104,16 @@ namespace ProjectTemplateTutorial.Helpers
             }
 
             return false;
+        }
+
+        private static Project GetProject(string projectName)
+        {
+            DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
+            Project project = (from Project p in (Array)_dte.ActiveSolutionProjects
+                               where p.Name.Equals(projectName)
+                               select p).FirstOrDefault();
+
+            return project;
         }
     }
 }

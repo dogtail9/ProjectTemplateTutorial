@@ -266,6 +266,7 @@
   <ItemGroup>
     <Content Include="Commands\Resources\RelayCommand.png" />
     <Content Include="Commands\Resources\RelayCommandPackage.ico" />
+    <Resource Include="Resources\FolderOpened.png" />
     <Content Include="Tools\JsonT4.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>JsonT4.cs</LastGenOutput>

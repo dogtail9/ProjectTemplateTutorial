@@ -18,19 +18,40 @@
                HorizontalAlignment="Left"
                Margin="10,10,0,0"/>
 
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/FolderOpened.png" 
+               Width="15" 
+               Height="15" 
+               VerticalAlignment="Top" 
+               HorizontalAlignment="Left" 
+               Margin="30,31,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/FolderOpened.png"
+               Width="15" 
+               Height="15" 
+               VerticalAlignment="Top" 
+               HorizontalAlignment="Left" 
+               Margin="50,52,0,0"/>
+
         <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/CSProjectNode.png" 
                Width="15" 
                Height="15"
                VerticalAlignment="Top"
                HorizontalAlignment="Left"
-               Margin="33,31,0,0"/>
+               Margin="70,73,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/FolderOpened.png"
+               Width="15"
+               Height="15"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Margin="50,94,0,0"/>
 
         <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/CSProjectNode.png" 
                Width="15"
                Height="15"
                VerticalAlignment="Top"
                HorizontalAlignment="Left"
-               Margin="33,51,0,0"/>
+               Margin="70,114,0,0"/>
 
         <TextBlock x:Name="SolutionNameTbx" 
                    HorizontalAlignment="Stretch" 
@@ -38,16 +59,36 @@
                    Margin="30,10,10,0" 
                    Text="SolutionName"/>
 
+        <CheckBox x:Name="SourceFolderCbx" 
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Top" 
+                  Content="Source"
+                  Margin="50,31,10,0" />
+
+        <CheckBox x:Name="MandatoryProjectSolutionFolderCbx" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Top" 
+                   Margin="70,52,10,0" 
+                   IsChecked="True"
+                   Content="Mandatory"/>
+
         <TextBlock x:Name="MandatoryProjectNameTbx" 
                    HorizontalAlignment="Stretch" 
                    VerticalAlignment="Top" 
-                   Margin="53,31,17,0" 
+                   Margin="90,73,10,0" 
                    Text="MandatoryProjectName"/>
+
+        <CheckBox x:Name="OptionalProjectSolutionFolderCbx" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Top" 
+                   Margin="70,94,10,0"
+                   IsChecked="True"
+                   Content="Optional"/>
 
         <CheckBox x:Name="OptionalProjectNameCbx" 
                   HorizontalAlignment="Stretch" 
                   VerticalAlignment="Top" 
-                  Margin="53,51,17,0" 
+                  Margin="90,114,10,0" 
                   IsChecked="True"
                   Content="OptionalProjectName" />
 
