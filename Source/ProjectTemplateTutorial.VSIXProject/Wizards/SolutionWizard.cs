@@ -56,73 +56,106 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
                 destination = Path.Combine(destination, "Source");
             }
 
-            var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
-            var templateName = "ProjectTemplateTutorial.Mandatory";
+            //var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
+            //var templateName = "ProjectTemplateTutorial.Mandatory";
 
 
-            Project mandatoryPproject;
-            if (sourceSolutionFolder == null)
-            {
-                if (_mandatoryFolder)
-                {
-                    SolutionFolder mandatoryFolder = _dte.Solution.AddSolutionFolderEx("Mandatory");
-                    mandatoryPproject = mandatoryFolder.AddProject(destination, projectName, templateName);
-                }
-                else
-                {
-                    mandatoryPproject = _dte.Solution.AddProject(destination, projectName, templateName);
-                }
-            }
-            else
-            {
-                if (_mandatoryFolder)
-                {
-                    SolutionFolder mandatoryFolder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolder("Mandatory").Object;
-                    mandatoryPproject = mandatoryFolder.AddProject(destination, projectName, templateName);
-                }
-                else
-                {
-                    mandatoryPproject = sourceSolutionFolder.AddProject(destination, projectName, templateName);
-                }
+            Project mandatoryPproject = AddProject("Mandatory", destination, _mandatoryFolder, sourceSolutionFolder); 
+            //if (sourceSolutionFolder == null)
+            //{
+            //    if (_mandatoryFolder)
+            //    {
+            //        SolutionFolder mandatoryFolder = _dte.Solution.AddSolutionFolderEx("Mandatory");
+            //        mandatoryPproject = mandatoryFolder.AddProject(destination, projectName, templateName);
+            //    }
+            //    else
+            //    {
+            //        mandatoryPproject = _dte.Solution.AddProject(destination, projectName, templateName);
+            //    }
+            //}
+            //else
+            //{
+            //    if (_mandatoryFolder)
+            //    {
+            //        SolutionFolder mandatoryFolder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolder("Mandatory").Object;
+            //        mandatoryPproject = mandatoryFolder.AddProject(destination, projectName, templateName);
+            //    }
+            //    else
+            //    {
+            //        mandatoryPproject = sourceSolutionFolder.AddProject(destination, projectName, templateName);
+            //    }
 
-            }
+            //}
             mandatoryPproject.SetResponsibility(ProjectResponsibilities.Mandatory);
 
-            Project optionalProject;
             if (_addOptionalProject)
             {
-                projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
-                templateName = "ProjectTemplateTutorial.Optional";
+                //projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
+                //templateName = "ProjectTemplateTutorial.Optional";
 
-                if (sourceSolutionFolder == null)
-                {
-                    if (_optionalFolder)
-                    {
-                        SolutionFolder optionalFolder = _dte.Solution.AddSolutionFolderEx("Optional");
-                        optionalProject = optionalFolder.AddProject(destination, projectName, templateName);
-                    }
-                    else
-                    {
-                        optionalProject = _dte.Solution.AddProject(destination, projectName, templateName);
-                    }
-                }
-                else
-                {
-                    if (_optionalFolder)
-                    {
-                        SolutionFolder optionalFolder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolder("Optional").Object;
-                        optionalProject = optionalFolder.AddProject(destination, projectName, templateName);
-                    }
-                    else
-                    {
-                        optionalProject = sourceSolutionFolder.AddProject(destination, projectName, templateName);
-                    }
-                }
+                //if (sourceSolutionFolder == null)
+                //{
+                //    if (_optionalFolder)
+                //    {
+                //        SolutionFolder optionalFolder = _dte.Solution.AddSolutionFolderEx("Optional");
+                //        optionalProject = optionalFolder.AddProject(destination, projectName, templateName);
+                //    }
+                //    else
+                //    {
+                //        optionalProject = _dte.Solution.AddProject(destination, projectName, templateName);
+                //    }
+                //}
+                //else
+                //{
+                //    if (_optionalFolder)
+                //    {
+                //        SolutionFolder optionalFolder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolder("Optional").Object;
+                //        optionalProject = optionalFolder.AddProject(destination, projectName, templateName);
+                //    }
+                //    else
+                //    {
+                //        optionalProject = sourceSolutionFolder.AddProject(destination, projectName, templateName);
+                //    }
+                //}
 
+                Project optionalProject = AddProject("Optional", destination, _optionalFolder, sourceSolutionFolder);
                 optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
                 optionalProject.InstallNuGetPackage("Newtonsoft.Json");
                 optionalProject.AddItem("ProjectTemplateTutorial.ItemTemplate", "Json1.jc");
             }
+        }
+
+        private Project AddProject(string projectSufix, string destination, bool projectFolder=false, SolutionFolder sourceSolutionFolder = null )
+        {
+            var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.{projectSufix}";
+            var templateName = $"ProjectTemplateTutorial.{projectSufix}";
+            Project project;
+            if (sourceSolutionFolder == null)
+            {
+                if (_optionalFolder)
+                {
+                    SolutionFolder optionalFolder = _dte.Solution.AddSolutionFolderEx(projectSufix);
+                    project = optionalFolder.AddProject(destination, projectName, templateName);
+                }
+                else
+                {
+                    project = _dte.Solution.AddProject(destination, projectName, templateName);
+                }
+            }
+            else
+            {
+                if (_optionalFolder)
+                {
+                    SolutionFolder optionalFolder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolder(projectSufix).Object;
+                    project = optionalFolder.AddProject(destination, projectName, templateName);
+                }
+                else
+                {
+                    project = sourceSolutionFolder.AddProject(destination, projectName, templateName);
+                }
+            }
+
+            return project;
         }
 
         public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
