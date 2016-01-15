@@ -10,6 +10,7 @@ I have the following softwares installed on my machine.
 * Visual Studio SDK
 * [Extensibility Tools for Visual Studio](https://github.com/madskristensen/ExtensibilityTools)
 * [ILSyp](http://ilspy.net/)
+* Microsoft ASP.NET 5 RC1 Upated 1
 
 If you want to skip some parts of the tutorial, you can download the code and start where you want.
 * [Step 2 : Mandatory project template](https://github.com/dogtail9/ProjectTemplateTutorial#step-2--mandatory-project-template)
@@ -1324,4 +1325,8 @@ Let's clean up our code a bit. We have two methods, AddProject and InstallNuGetP
 It would also be nice to add the posibility to group project by adding them to solution folders. 
 If you skiped the sixth step in this tutorial you can download the code from the [ItemTemplate](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
 
+### Create a helper library
+
 ### Solution folders
+
+## Summary
