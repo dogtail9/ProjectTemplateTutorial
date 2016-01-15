@@ -970,10 +970,12 @@ addCopyrightCommand = new RelayCommand(
 We are done with the command step of this tutorial.
 
 ## Step 6 : Create a custom item template
-
+Let's create an item template with a custom tool to generate C # code from Json data. 
 If you skiped the fifth step in this tutorial you can download the code from the [Commands](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
 
 ### Item template
+First we need the item template project.
+
 ![Create blank solution](Images/0080_ItemTemplate/0010.PNG)
 
 *Add an item template project to the ProjectTemplates folder*
@@ -1028,6 +1030,7 @@ If you skiped the fifth step in this tutorial you can download the code from the
 *The Json1.jc file is created in the project*
 
 ### T4 (Text Template Transformation Toolkit) Code Generation
+Now that we have a item template let's create a custom tool to generate a C# class from it.
 
 ![Create blank solution](Images/0080_ItemTemplate/0070.PNG)
 
@@ -1314,7 +1317,7 @@ optionalProject.ProjectItems.AddFromTemplate(templatePath, "Json1.jc");
 
 ![Create blank solution](Images/0080_ItemTemplate/0100.PNG)
 
-*The item tempalte is now added to the optional project by default*
+*The item tempalte is now added to the optional project by default when you create a new project*
  
 ## Step 7 : Refactor some code to a reusable helper library
 Let's clean up our code a bit. We have two methods, AddProcejt and InstallNuGetPackages in the SolutionWizard class that we could reuse in other project templates.
