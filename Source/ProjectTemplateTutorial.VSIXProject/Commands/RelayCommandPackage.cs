@@ -16,6 +16,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
 using EnvDTE;
+using ProjectTemplateTutorial.Helpers;
 
 namespace ProjectTemplateTutorial.VSIXProject.Commands
 {

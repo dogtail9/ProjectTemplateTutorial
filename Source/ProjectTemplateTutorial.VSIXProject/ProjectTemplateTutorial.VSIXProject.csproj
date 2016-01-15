@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Commands\ProjectExtensions.cs" />
+    <Compile Include="Commands\ProjectResponsibilities.cs" />
     <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Commands\RelayCommandPackage.cs" />
     <Compile Include="Commands\RelayCommandPackage1.cs">
@@ -212,6 +212,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ProjectTemplateTutorial.Helpers\ProjectTemplateTutorial.Helpers.csproj">
+      <Project>{4636c99e-70af-421b-8dee-2542c00751d5}</Project>
+      <Name>ProjectTemplateTutorial.Helpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProjectTemplateTutorial.ItemTemplate\ProjectTemplateTutorial.ItemTemplate.csproj">
       <Project>{B49637E6-BDD3-4DEB-9E75-8FF641B55DBA}</Project>
       <Name>ProjectTemplateTutorial.ItemTemplate</Name>

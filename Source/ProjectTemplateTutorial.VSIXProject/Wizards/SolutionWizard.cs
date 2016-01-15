@@ -12,6 +12,7 @@ using ProjectTemplateTutorial.VSIXProject.Dialogs;
 using Microsoft.VisualStudio.ComponentModelHost;
 using NuGet.VisualStudio;
 using ProjectTemplateTutorial.VSIXProject.Commands;
+using ProjectTemplateTutorial.Helpers;
 
 namespace ProjectTemplateTutorial.VSIXProject.Wizards
 {
@@ -47,22 +48,18 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
             var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
             var templateName = "ProjectTemplateTutorial.Mandatory";
 
-            Project mandatoryPproject = AddProject(destination, projectName, templateName);
+            Project mandatoryPproject = _dte.Solution.AddProject(destination, projectName, templateName);
             mandatoryPproject.SetResponsibility(ProjectResponsibilities.Mandatory);
-
 
             if (_addOptionalProject)
             {
                 projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
                 templateName = "ProjectTemplateTutorial.Optional";
 
-                Project optionalProject = AddProject(destination, projectName, templateName);
+                Project optionalProject = _dte.Solution.AddProject(destination, projectName, templateName);
                 optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
-
-                InstallNuGetPackage(projectName, "Newtonsoft.Json");
-
-                string templatePath = ((Solution4)_dte.Solution).GetProjectItemTemplate("ProjectTemplateTutorial.ItemTemplate", "CSharp");
-                optionalProject.ProjectItems.AddFromTemplate(templatePath, "Json1.jc");
+                optionalProject.InstallNuGetPackage("Newtonsoft.Json");
+                optionalProject.AddItem("ProjectTemplateTutorial.ItemTemplate", "Json1.jc");
             }
         }
 
@@ -84,48 +81,5 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
         }
 
         public bool ShouldAddProjectItem(string filePath) => true;
-
-        private Project AddProject(string destination, string projectName, string templateName)
-        {
-            string projectPath = Path.Combine(destination, projectName);
-            string templatePath = ((Solution4)_dte.Solution).GetProjectTemplate(templateName, "CSharp");
-
-            _dte.Solution.AddFromTemplate(templatePath, projectPath, projectName, false);
-
-            Project project = (from Project p in _dte.Solution.Projects
-                               where p.Name.Equals(projectName)
-                               select p).FirstOrDefault();
-
-            return project;
-        }
-
-        private bool InstallNuGetPackage(string projectName, string package)
-        {
-            bool installedPkg = true;
-
-            Project project = (from Project p in (Array)_dte.ActiveSolutionProjects
-                               where p.Name.Equals(projectName)
-                               select p).First();
-            try
-            {
-                var componentModel = (IComponentModel)Package.GetGlobalService(typeof(SComponentModel));
-                IVsPackageInstallerServices installerServices = componentModel.GetService<IVsPackageInstallerServices>();
-                if (!installerServices.IsPackageInstalled(project, package))
-                {
-                    _dte.StatusBar.Text = @"Installing " + package + " NuGet package, this may take a minute...";
-                    IVsPackageInstaller installer = componentModel.GetService<IVsPackageInstaller>();
-                    installer.InstallPackage(null, project, package, (System.Version)null, false);
-                    _dte.StatusBar.Text = @"Finished installing the " + package + " NuGet package";
-                }
-            }
-            catch (Exception ex)
-            {
-                string t = ex.Message;
-                installedPkg = false;
-                _dte.StatusBar.Text = @"Unable to install the  " + package + " NuGet package";
-            }
-
-            return installedPkg;
-        }
     }
 }

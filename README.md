@@ -1321,11 +1321,194 @@ optionalProject.ProjectItems.AddFromTemplate(templatePath, "Json1.jc");
 *The item tempalte is now added to the optional project by default when you create a new project*
  
 ## Step 7 : Refactor some code to a reusable helper library
-Let's clean up our code a bit. We have two methods, AddProject and InstallNuGetPackages in the SolutionWizard class and the RelayCommand class that we could reuse in other project templates. 
+Let's clean up our code a bit. We have two methods, AddProject and InstallNuGetPackages in the SolutionWizard class, the RelayCommand class and the ProjectExtensions class that we could reuse in other project templates. 
 It would also be nice to add the posibility to group project by adding them to solution folders. 
 If you skiped the sixth step in this tutorial you can download the code from the [ItemTemplate](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
 
 ### Create a helper library
+We will implement our help library as extension methods for the Visual Studio API.
+
+![Create blank solution](Images/0090_HelperLibrary/0010.PNG)
+
+*Start by adding a new static class library to the Helpers project*
+
+![Create blank solution](Images/0090_HelperLibrary/0020.PNG)
+
+*Add a reference to the helper library in the VSIXProject*
+
+```Csharp
+public static class DteExtensions
+{
+}
+```
+
+*Add the DteExtensions class to the new helper library project*
+
+### AddProject
+Projects are added to Solutions so let's make the Addproject method an extension method for the Solution class.
+
+```CSharp
+public static Project AddProject(this Solution solution, string destination, string projectName, string templateName)
+{
+    string projectPath = Path.Combine(destination, projectName);
+    string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "CSharp");
+
+    solution.AddFromTemplate(templatePath, projectPath, projectName, false);
+
+    Project project = (from Project p in solution.Projects
+                       where p.Name.Equals(projectName)
+                       select p).FirstOrDefault();
+
+    return project;
+}
+```
+
+*Move the AddProject method to the DteExtensions class*
+
+### AddItem
+We do not have a method for adding an item to a project so let's add one.
+
+```CSharp
+public static void AddItem(this Project project, string itemTemplateName, string itemName)
+{
+    string templatePath = ((Solution4)project.DTE.Solution).GetProjectItemTemplate(itemTemplateName, "CSharp");
+    project.ProjectItems.AddFromTemplate(templatePath, itemName);
+}
+```
+
+*Add the new method AddItem to the DteExtensions class*
+
+### InstallNuGetPackages
+NuGet packages are added to project so let's make the InstallNuGetPackage en axtension method on the Project class*
+
+```CSharp
+public static bool InstallNuGetPackage(this Project project, string packageName)
+{
+    bool installedPkg = true;
+    
+    try
+    {
+        var componentModel = (IComponentModel)Package.GetGlobalService(typeof(SComponentModel));
+        IVsPackageInstallerServices installerServices = componentModel.GetService<IVsPackageInstallerServices>();
+        if (!installerServices.IsPackageInstalled(project, packageName))
+        {
+            IVsPackageInstaller installer = componentModel.GetService<IVsPackageInstaller>();
+            installer.InstallPackage(null, project, packageName, (System.Version)null, false);
+        }
+    }
+    catch (Exception ex)
+    {
+        installedPkg = false;
+    }
+
+    return installedPkg;
+}
+```
+
+*Move the InstallNuGetPackage to the DteExtensions class*
+
+### Project Responsibility
+Resonibilities are properties of a project so let's make it an extension method for the Project class.
+We don't want to hard code the responsibilities present in a project template så let's make the SetResponsibility method generic as well.
+
+```CSharp
+public static void SetResponsibility<T>(this Project project, params T[] responsibilities)
+{
+    foreach (var res in Enum.GetValues(typeof(T)))
+    {
+        string name = res.ToString();
+        project.Globals[name] = Boolean.FalseString;
+        project.Globals.set_VariablePersists(name, true);
+    }
+
+    foreach (var res in responsibilities)
+    {
+        string name = res.ToString();
+        project.Globals[name] = Boolean.TrueString;
+        project.Globals.set_VariablePersists(name, true);
+    }
+}
+```
+
+*Move the SetResponsibility method to the DteExtensions class and make it a generic method*
+
+```CSharp
+public static bool IsProjectResponsible(this Project project, Enum responsibility)
+{
+    if (project == null)
+        throw new ArgumentNullException(nameof(project));
+
+    if (project.Globals.get_VariableExists(responsibility.ToString()))
+    {
+        string propertyValue = (string)project.Globals[responsibility.ToString()];
+        bool propertyValueBoolean;
+
+        if (Boolean.TryParse(propertyValue, out propertyValueBoolean))
+        {
+            if (propertyValueBoolean)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+```
+
+*Move the IsProjectResponsible method to the DteExtensions class*
+
+### SolutionWizard
+Delete the AddProject and the InstallNuGetPackage methods int the SolutionWizard class.
+
+```CSharp
+public void RunFinished()
+{
+    string destination = _replacementsDictionary["$destinationdirectory$"];
+    string fileName = _replacementsDictionary["$safeprojectname$"] + ".sln";
+    _dte.Solution.SaveAs(Path.Combine(destination, fileName));
+
+    var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
+    var templateName = "ProjectTemplateTutorial.Mandatory";
+
+    Project mandatoryPproject = _dte.Solution.AddProject(destination, projectName, templateName);
+    mandatoryPproject.SetResponsibility(ProjectResponsibilities.Mandatory);
+
+    if (_addOptionalProject)
+    {
+        projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
+        templateName = "ProjectTemplateTutorial.Optional";
+
+        Project optionalProject = _dte.Solution.AddProject(destination, projectName, templateName);
+        optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
+        optionalProject.InstallNuGetPackage("Newtonsoft.Json");
+        optionalProject.AddItem("ProjectTemplateTutorial.ItemTemplate", "Json1.jc");
+    }
+}
+```
+
+*Use the new extension methods in the RunFinished method in the SolutionWizard class*
+
+### ProjectExtensions
+Delete the ProjectExtensions class and rename the file to ProjectResponsibilities.
+
+```CSharp
+public enum ProjectResponsibilities
+{
+    Mandatory,
+    Optional
+}
+```
+
+*Keep only the ProjectResponsibilities enum*
+
+### RelayCommandPackage
+
+```Csharp
+using ProjectTemplateTutorial.Helpers;
+```
+
+*Add the using for the helper library to the RelayCommandPackage class*
 
 ### Solution folders
 
