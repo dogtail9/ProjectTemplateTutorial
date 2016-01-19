@@ -15,9 +15,47 @@ namespace ProjectTemplateTutorial.Helpers
 {
     public static class DteExtensions
     {
-        public static SolutionFolder AddSolutionFolderEx(this Solution solution, string folderName) => ((Solution4)solution).AddSolutionFolder(folderName).Object;
+        public static SolutionFolder GetSolutionFolderEx(this Solution solution, string folderName)
+        {
+            Project solutionFolder = (from p in ((Solution2)solution).Projects.OfType<Project>()
+                                      where p.Name.Equals(folderName)
+                                      select p).FirstOrDefault();
 
-        public static SolutionFolder AddSolutionFolderEx(this SolutionFolder solutionFolder, string folderName) => solutionFolder.AddSolutionFolder(folderName).Object;
+            return solutionFolder?.Object;
+        }
+
+        public static SolutionFolder GetSolutionFolderEx(this SolutionFolder solutionFolder, string folderName)
+        {
+            ProjectItem folder = (from p in solutionFolder.Parent.ProjectItems.OfType<ProjectItem>()
+                                  where p.Name.Equals(folderName)
+                                  select p).FirstOrDefault();
+
+            return ((Project)folder?.Object)?.Object;
+        }
+
+        public static SolutionFolder AddSolutionFolderEx(this Solution solution, string folderName)
+        {
+            SolutionFolder folder = solution.GetSolutionFolderEx(folderName);
+
+            if (folder == null)
+            {
+                folder = ((Solution4)solution).AddSolutionFolder(folderName).Object;
+            }
+
+            return folder;
+        }
+
+        public static SolutionFolder AddSolutionFolderEx(this SolutionFolder solutionFolder, string folderName)
+        {
+            SolutionFolder folder = solutionFolder.GetSolutionFolderEx(folderName);
+
+            if (folder == null)
+            {
+                folder = solutionFolder.AddSolutionFolder(folderName).Object;
+            }
+
+            return folder;
+        }
 
         public static Project AddProject(this Solution solution, string destination, string projectName, string templateName, SolutionFolder solutionFolder = null)
         {
@@ -35,7 +73,7 @@ namespace ProjectTemplateTutorial.Helpers
             string templatePath = ((Solution4)solutionFolder.DTE.Solution).GetProjectTemplate(templateName, "CSharp");
 
             solutionFolder.AddFromTemplate(templatePath, projectPath, projectName);
-            
+
             return GetProject(projectName);
         }
 

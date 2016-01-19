@@ -51,90 +51,49 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
 
             SolutionFolder sourceSolutionFolder = null;
             if (_sourceFolder)
-            {
                 sourceSolutionFolder = _dte.Solution.AddSolutionFolderEx("Source");
-                destination = Path.Combine(destination, "Source");
-            }
 
-            //var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Mandatory";
-            //var templateName = "ProjectTemplateTutorial.Mandatory";
+            string mandatoryFolderName = null;
+            if (_mandatoryFolder)
+                mandatoryFolderName = "Mandatory";
+
+            string optionalFolderName = null;
+            if (_optionalFolder)
+                optionalFolderName = "Optional";
 
 
-            Project mandatoryPproject = AddProject("Mandatory", destination, _mandatoryFolder, sourceSolutionFolder); 
-            //if (sourceSolutionFolder == null)
-            //{
-            //    if (_mandatoryFolder)
-            //    {
-            //        SolutionFolder mandatoryFolder = _dte.Solution.AddSolutionFolderEx("Mandatory");
-            //        mandatoryPproject = mandatoryFolder.AddProject(destination, projectName, templateName);
-            //    }
-            //    else
-            //    {
-            //        mandatoryPproject = _dte.Solution.AddProject(destination, projectName, templateName);
-            //    }
-            //}
-            //else
-            //{
-            //    if (_mandatoryFolder)
-            //    {
-            //        SolutionFolder mandatoryFolder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolder("Mandatory").Object;
-            //        mandatoryPproject = mandatoryFolder.AddProject(destination, projectName, templateName);
-            //    }
-            //    else
-            //    {
-            //        mandatoryPproject = sourceSolutionFolder.AddProject(destination, projectName, templateName);
-            //    }
-
-            //}
+            Project mandatoryPproject = AddProject("Mandatory", "ProjectTemplateTutorial.Mandatory", sourceSolutionFolder, mandatoryFolderName);
             mandatoryPproject.SetResponsibility(ProjectResponsibilities.Mandatory);
+
+            Project mandatoryPproject2 = AddProject("Mandatory2", "ProjectTemplateTutorial.Mandatory", sourceSolutionFolder, mandatoryFolderName);
+            mandatoryPproject2.SetResponsibility(ProjectResponsibilities.Mandatory);
 
             if (_addOptionalProject)
             {
-                //projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
-                //templateName = "ProjectTemplateTutorial.Optional";
-
-                //if (sourceSolutionFolder == null)
-                //{
-                //    if (_optionalFolder)
-                //    {
-                //        SolutionFolder optionalFolder = _dte.Solution.AddSolutionFolderEx("Optional");
-                //        optionalProject = optionalFolder.AddProject(destination, projectName, templateName);
-                //    }
-                //    else
-                //    {
-                //        optionalProject = _dte.Solution.AddProject(destination, projectName, templateName);
-                //    }
-                //}
-                //else
-                //{
-                //    if (_optionalFolder)
-                //    {
-                //        SolutionFolder optionalFolder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolder("Optional").Object;
-                //        optionalProject = optionalFolder.AddProject(destination, projectName, templateName);
-                //    }
-                //    else
-                //    {
-                //        optionalProject = sourceSolutionFolder.AddProject(destination, projectName, templateName);
-                //    }
-                //}
-
-                Project optionalProject = AddProject("Optional", destination, _optionalFolder, sourceSolutionFolder);
+                Project optionalProject = AddProject("Optional", "ProjectTemplateTutorial.Optional", sourceSolutionFolder, optionalFolderName);
                 optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
                 optionalProject.InstallNuGetPackage("Newtonsoft.Json");
                 optionalProject.AddItem("ProjectTemplateTutorial.ItemTemplate", "Json1.jc");
             }
         }
 
-        private Project AddProject(string projectSufix, string destination, bool projectFolder=false, SolutionFolder sourceSolutionFolder = null )
+        private Project AddProject(string projectSufix, string templateName, SolutionFolder sourceSolutionFolder = null, string folderName = null)
         {
+            string destination = _replacementsDictionary["$destinationdirectory$"];
+
+            if (_sourceFolder)
+            {
+                destination = Path.Combine(destination, "Source");
+            }
+
             var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.{projectSufix}";
-            var templateName = $"ProjectTemplateTutorial.{projectSufix}";
+
             Project project;
             if (sourceSolutionFolder == null)
             {
-                if (_optionalFolder)
+                if (folderName != null)
                 {
-                    SolutionFolder optionalFolder = _dte.Solution.AddSolutionFolderEx(projectSufix);
+                    SolutionFolder optionalFolder = _dte.Solution.AddSolutionFolderEx(folderName);
                     project = optionalFolder.AddProject(destination, projectName, templateName);
                 }
                 else
@@ -144,10 +103,10 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
             }
             else
             {
-                if (_optionalFolder)
+                if (folderName != null)
                 {
-                    SolutionFolder optionalFolder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolder(projectSufix).Object;
-                    project = optionalFolder.AddProject(destination, projectName, templateName);
+                    SolutionFolder folder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolderEx(folderName);
+                    project = folder.AddProject(destination, projectName, templateName);
                 }
                 else
                 {
