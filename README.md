@@ -1647,3 +1647,27 @@ optionalProject.SetAsStartup();
 ```
 
 *Set the optional project as the startup project in the SolutionWizard class*
+
+### ShowStatusBarMessage
+If an operation is taking longer then a second it is nice to give the user some feedback about what is happening. 
+In visual Studio you can do that in the statusbar.
+
+```CSharp
+public static void ShowStatusBarMessage(this string message)
+{
+    DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
+    _dte.StatusBar.Text = message;
+}
+```
+
+*Add the ShowStatusBarMessage method to the DteExtensions class*
+
+```CSharp
+$"Installing {packageName} NuGet package, this may take a minute...".ShowStatusBarMessage();
+```
+
+*Show a message in the statusbar about a nuget package beeing installed*
+
+![Create blank solution](Images/0090_HelperLibrary/0040.PNG)
+
+*Visual Studio telling the user that the Newtonsoft.Json NuGet package is added*

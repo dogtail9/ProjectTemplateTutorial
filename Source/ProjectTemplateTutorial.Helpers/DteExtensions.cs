@@ -16,6 +16,12 @@ namespace ProjectTemplateTutorial.Helpers
 {
     public static class DteExtensions
     {
+        public static void ShowStatusBarMessage(this string message)
+        {
+            DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
+            _dte.StatusBar.Text = message;
+        }
+
         public static SolutionFolder GetSolutionFolderEx(this Solution solution, string folderName)
         {
             Project solutionFolder = (from p in ((Solution2)solution).Projects.OfType<Project>()
@@ -94,8 +100,10 @@ namespace ProjectTemplateTutorial.Helpers
                 IVsPackageInstallerServices installerServices = componentModel.GetService<IVsPackageInstallerServices>();
                 if (!installerServices.IsPackageInstalled(project, packageName))
                 {
+                    $"Installing {packageName} NuGet package, this may take a minute...".ShowStatusBarMessage();
                     IVsPackageInstaller installer = componentModel.GetService<IVsPackageInstaller>();
                     installer.InstallPackage(null, project, packageName, (System.Version)null, false);
+                    $"Finished installing the {packageName} NuGet package".ShowStatusBarMessage();
                 }
             }
             catch (Exception ex)
@@ -108,12 +116,14 @@ namespace ProjectTemplateTutorial.Helpers
 
         public static void SetAsStartup(this Project project)
         {
+            $"Set {project.Name} as the startup project".ShowStatusBarMessage();
             DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
             _dte.Solution.Properties.Item("StartupProject").Value = project.Name;
         }
 
         public static void AddReference(this Project project, Project projectToAdd)
         {
+            $"Adding {projectToAdd.Name} as a reference in {project.Name}".ShowStatusBarMessage();
             (project.Object as VSProject).References.AddProject(projectToAdd);
         }
 
