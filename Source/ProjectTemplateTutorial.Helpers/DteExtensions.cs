@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VSLangProj;
 
 namespace ProjectTemplateTutorial.Helpers
 {
@@ -57,7 +58,7 @@ namespace ProjectTemplateTutorial.Helpers
             return folder;
         }
 
-        public static Project AddProject(this Solution solution, string destination, string projectName, string templateName, SolutionFolder solutionFolder = null)
+        public static Project AddProject(this Solution solution, string destination, string projectName, string templateName)
         {
             string projectPath = Path.Combine(destination, projectName);
             string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "CSharp");
@@ -103,6 +104,17 @@ namespace ProjectTemplateTutorial.Helpers
             }
 
             return installedPkg;
+        }
+
+        public static void SetAsStartup(this Project project)
+        {
+            DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
+            _dte.Solution.Properties.Item("StartupProject").Value = project.Name;
+        }
+
+        public static void AddReference(this Project project, Project projectToAdd)
+        {
+            (project.Object as VSProject).References.AddProject(projectToAdd);
         }
 
         public static void SetResponsibility<T>(this Project project, params T[] responsibilities)

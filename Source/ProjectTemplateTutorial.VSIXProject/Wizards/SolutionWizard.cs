@@ -74,6 +74,8 @@ namespace ProjectTemplateTutorial.VSIXProject.Wizards
                 optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
                 optionalProject.InstallNuGetPackage("Newtonsoft.Json");
                 optionalProject.AddItem("ProjectTemplateTutorial.ItemTemplate", "Json1.jc");
+                mandatoryPproject.AddReference(optionalProject);
+                optionalProject.SetAsStartup();
             }
         }
 

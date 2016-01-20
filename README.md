@@ -10,7 +10,6 @@ I have the following softwares installed on my machine.
 * Visual Studio SDK
 * [Extensibility Tools for Visual Studio](https://github.com/madskristensen/ExtensibilityTools)
 * [ILSyp](http://ilspy.net/)
-* Microsoft ASP.NET 5 RC1 Upated 1
 
 If you want to skip some parts of the tutorial, you can download the code and start where you want.
 * [Step 2 : Mandatory project template](https://github.com/dogtail9/ProjectTemplateTutorial#step-2--mandatory-project-template)
@@ -1511,5 +1510,140 @@ using ProjectTemplateTutorial.Helpers;
 *Add the using for the helper library to the RelayCommandPackage class*
 
 ### Solution folders
+Let's add the functionality to handle solution folder in our project template.
 
-## Summary
+### GetSolutionFolderEx
+We want to add solutionfolders but first we need to check if they already exists. 
+
+```CSharp
+public static SolutionFolder GetSolutionFolderEx(this Solution solution, string folderName)
+{
+    Project solutionFolder = (from p in ((Solution2)solution).Projects.OfType<Project>()
+                              where p.Name.Equals(folderName)
+                              select p).FirstOrDefault();
+
+    return solutionFolder?.Object;
+}
+
+public static SolutionFolder GetSolutionFolderEx(this SolutionFolder solutionFolder, string folderName)
+{
+    ProjectItem folder = (from p in solutionFolder.Parent.ProjectItems.OfType<ProjectItem>()
+                          where p.Name.Equals(folderName)
+                          select p).FirstOrDefault();
+
+    return ((Project)folder?.Object)?.Object;
+}
+```
+
+*The GetSolutionFolderEx methods return the SolutionFolder object if it exists otherwise they return null*
+
+### AddSolutionFolderEx
+Now we are ready to add solution folders to the project template. We need a way to add a solution folder to the root of the solution and a way to add a solution folder to another solutionfolder.
+
+```CSharp
+public static SolutionFolder AddSolutionFolderEx(this Solution solution, string folderName)
+{
+    SolutionFolder folder = solution.GetSolutionFolderEx(folderName);
+
+    if (folder == null)
+    {
+        folder = ((Solution4)solution).AddSolutionFolder(folderName).Object;
+    }
+
+    return folder;
+}
+
+public static SolutionFolder AddSolutionFolderEx(this SolutionFolder solutionFolder, string folderName)
+{
+    SolutionFolder folder = solutionFolder.GetSolutionFolderEx(folderName);
+
+    if (folder == null)
+    {
+        folder = solutionFolder.AddSolutionFolder(folderName).Object;
+    }
+
+    return folder;
+}
+```
+
+*The AddSolutionFolderEx methods adds a folder to either the solution or another SolutionFolder and returns the newly created SolutionFolder. If the SolutionFolder already exists it will return that SolutionFolder.*
+
+### GetProject
+Create a new method that we can reuse when we add a project to our solution or to a solution folder.
+
+```CSharp
+private static Project GetProject(string projectName)
+{
+    DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
+    Project project = (from Project p in (Array)_dte.ActiveSolutionProjects
+                       where p.Name.Equals(projectName)
+                       select p).FirstOrDefault();
+
+    return project;
+}
+```
+*Get a project by name*
+
+### AddProject
+
+```CSharp
+public static Project AddProject(this Solution solution, string destination, string projectName, string templateName)
+{
+    string projectPath = Path.Combine(destination, projectName);
+    string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "CSharp");
+
+    solution.AddFromTemplate(templatePath, projectPath, projectName, false);
+
+    return GetProject(projectName);
+}
+
+public static Project AddProject(this SolutionFolder solutionFolder, string destination, string projectName, string templateName)
+{
+    string projectPath = Path.Combine(destination, projectName);
+    string templatePath = ((Solution4)solutionFolder.DTE.Solution).GetProjectTemplate(templateName, "CSharp");
+
+    solutionFolder.AddFromTemplate(templatePath, projectPath, projectName);
+
+    return GetProject(projectName);
+}
+```
+
+*Use the GetProject method in the already existing AddProject method. Add a method to add a project to a solution folder*
+ 
+### AddReference
+
+![Create blank solution](Images/0090_HelperLibrary/0030.PNG)
+
+*Add a reference to VSLangProj in the Helpers project*
+
+````CSharp
+public static void AddReference(this Project project, Project projectToAdd)
+{
+    (project.Object as VSProject).References.AddProject(projectToAdd);
+}
+```
+*Add the AddReference method to the DteExtensions class*
+
+```CSharp
+mandatoryPproject.AddReference(optionalProject);
+```
+
+*Add the optional project as a reference to the mandatory project in the SolutionWizzard class*
+ 
+### SetStartupProject
+
+```CSharp
+public static void SetAsStartup(this Project project)
+{
+    DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
+    _dte.Solution.Properties.Item("StartupProject").Value = project.Name;
+}
+```
+
+*Add the SetAsStartup method to the DteExtensions class*
+ 
+```CSharp
+optionalProject.SetAsStartup();
+```
+
+*Set the optional project as the startup project in the SolutionWizard class*
