@@ -1630,7 +1630,7 @@ mandatoryPproject.AddReference(optionalProject);
 
 *Add the optional project as a reference to the mandatory project in the SolutionWizzard class*
  
-### SetStartupProject
+### SetAsStartup
 
 ```CSharp
 public static void SetAsStartup(this Project project)
