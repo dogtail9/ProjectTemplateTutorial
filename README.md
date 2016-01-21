@@ -11,6 +11,14 @@ I have the following softwares installed on my machine.
 * [Extensibility Tools for Visual Studio](https://github.com/madskristensen/ExtensibilityTools)
 * [ILSyp](http://ilspy.net/)
 
+When downloading the code from GitHub you have change the debug settings for the VSIXProject.
+* Start Action : C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe
+* Command line arguments: /rootsuffix EXP
+
+![Create blank solution](Images/0000_Pre/0010.PNG)
+
+*Change the debug settings for the VSIXProject when downloading the code from GitHub*
+
 If you want to skip some parts of the tutorial, you can download the code and start where you want.
 * [Step 2 : Mandatory project template](https://github.com/dogtail9/ProjectTemplateTutorial#step-2--mandatory-project-template)
 * [Step 3 : Optional project template](https://github.com/dogtail9/ProjectTemplateTutorial#step-3--optional-project-template)
@@ -1329,7 +1337,23 @@ We will implement our help library as extension methods for the Visual Studio AP
 
 ![Create blank solution](Images/0090_HelperLibrary/0010.PNG)
 
-*Start by adding a new static class library to the Helpers project*
+*Start by adding a new class library project*
+
+![Create blank solution](Images/0090_HelperLibrary/0025.PNG)
+
+*Add the Microsoft.VisualStudio.Shell.14 NuGet package to the Helper project*
+
+![Create blank solution](Images/0090_HelperLibrary/0028.PNG)
+
+*Add the NuGet.VisualStudio NuGet package to the Helper project*
+
+![Create blank solution](Images/0090_HelperLibrary/0026.PNG)
+
+*Add references to the DTE in the Helper project*
+
+![Create blank solution](Images/0090_HelperLibrary/0027.PNG)
+
+*Add a reference to Microsoft.VisualStudio.ComponentModelHost in the Helper project*
 
 ![Create blank solution](Images/0090_HelperLibrary/0020.PNG)
 
@@ -1341,10 +1365,12 @@ public static class DteExtensions
 }
 ```
 
-*Add the DteExtensions class to the new helper library project*
+*Rename the Class1 file to DteExtensions and make it static*
 
 ### AddProject
 Projects are added to Solutions so let's make the Addproject method an extension method for the Solution class.
+
+
 
 ```CSharp
 public static Project AddProject(this Solution solution, string destination, string projectName, string templateName)
@@ -1378,7 +1404,7 @@ public static void AddItem(this Project project, string itemTemplateName, string
 *Add the new method AddItem to the DteExtensions class*
 
 ### InstallNuGetPackages
-NuGet packages are added to project so let's make the InstallNuGetPackage en axtension method on the Project class*
+NuGet packages are added to project so let's make the InstallNuGetPackage en axtension method on the Project class.
 
 ```CSharp
 public static bool InstallNuGetPackage(this Project project, string packageName)
@@ -1408,7 +1434,7 @@ public static bool InstallNuGetPackage(this Project project, string packageName)
 
 ### Project Responsibility
 Resonibilities are properties of a project so let's make it an extension method for the Project class.
-We don't want to hard code the responsibilities present in a project template så let's make the SetResponsibility method generic as well.
+We don't want to hard code the responsibilities present in a project template so let's make the SetResponsibility method generic as well.
 
 ```CSharp
 public static void SetResponsibility<T>(this Project project, params T[] responsibilities)
@@ -1457,8 +1483,28 @@ public static bool IsProjectResponsible(this Project project, Enum responsibilit
 
 *Move the IsProjectResponsible method to the DteExtensions class*
 
+### ProjectExtensions
+Delete the ProjectExtensions class and rename the file to ProjectResponsibilities.
+
+```CSharp
+public enum ProjectResponsibilities
+{
+    Mandatory,
+    Optional
+}
+```
+
+*Keep only the ProjectResponsibilities enum*
+
 ### SolutionWizard
+
+
 Delete the AddProject and the InstallNuGetPackage methods int the SolutionWizard class.
+
+
+
+
+
 
 ```CSharp
 public void RunFinished()
@@ -1488,18 +1534,7 @@ public void RunFinished()
 
 *Use the new extension methods in the RunFinished method in the SolutionWizard class*
 
-### ProjectExtensions
-Delete the ProjectExtensions class and rename the file to ProjectResponsibilities.
 
-```CSharp
-public enum ProjectResponsibilities
-{
-    Mandatory,
-    Optional
-}
-```
-
-*Keep only the ProjectResponsibilities enum*
 
 ### RelayCommandPackage
 
@@ -1609,6 +1644,229 @@ public static Project AddProject(this SolutionFolder solutionFolder, string dest
 ```
 
 *Use the GetProject method in the already existing AddProject method. Add a method to add a project to a solution folder*
+### Update the SolutionWizard
+
+![Create blank solution](Images/0090_HelperLibrary/0060.PNG)
+
+*Export a new image for the folders and add the file to the Resources folder in the VSIXProject*
+
+![Create blank solution](Images/0090_HelperLibrary/0070.PNG)
+
+*Change the the Build Action of the FolderOpened.png file to Recource*
+
+```xml
+<platformUI:DialogWindow x:Class="ProjectTemplateTutorial.VSIXProject.Dialogs.SolutionWizardDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:local="clr-namespace:ProjectTemplateTutorial.VSIXProject.Dialogs"
+             xmlns:platformUI="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
+             Width="370" 
+             Height="210"
+             Title="Create Solution"
+             WindowStartupLocation="CenterScreen" 
+             ResizeMode="NoResize" 
+             ShowInTaskbar="False">
+    <Grid>
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/Solution.png" 
+               Width="15" 
+               Height="15" 
+               VerticalAlignment="Top" 
+               HorizontalAlignment="Left"
+               Margin="10,10,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/FolderOpened.png" 
+               Width="15" 
+               Height="15" 
+               VerticalAlignment="Top" 
+               HorizontalAlignment="Left" 
+               Margin="30,31,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/FolderOpened.png"
+               Width="15" 
+               Height="15" 
+               VerticalAlignment="Top" 
+               HorizontalAlignment="Left" 
+               Margin="50,52,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/CSProjectNode.png" 
+               Width="15" 
+               Height="15"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Margin="70,73,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/FolderOpened.png"
+               Width="15"
+               Height="15"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Margin="50,94,0,0"/>
+
+        <Image Source="pack://application:,,,/ProjectTemplateTutorial.VSIXProject;component/Resources/CSProjectNode.png" 
+               Width="15"
+               Height="15"
+               VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Margin="70,114,0,0"/>
+
+        <TextBlock x:Name="SolutionNameTbx" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Top"
+                   Margin="30,10,10,0" 
+                   Text="SolutionName"/>
+
+        <CheckBox x:Name="SourceFolderCbx" 
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Top" 
+                  Content="Source"
+                  Margin="50,31,10,0" />
+
+        <CheckBox x:Name="MandatoryProjectSolutionFolderCbx" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Top" 
+                   Margin="70,52,10,0" 
+                   IsChecked="True"
+                   Content="Mandatory"/>
+
+        <TextBlock x:Name="MandatoryProjectNameTbx" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Top" 
+                   Margin="90,73,10,0" 
+                   Text="MandatoryProjectName"/>
+
+        <CheckBox x:Name="OptionalProjectSolutionFolderCbx" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Top" 
+                   Margin="70,94,10,0"
+                   IsChecked="True"
+                   Content="Optional"/>
+
+        <CheckBox x:Name="OptionalProjectNameCbx" 
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Top" 
+                  Margin="90,114,10,0" 
+                  IsChecked="True"
+                  Content="OptionalProjectName" />
+
+        <Button x:Name="CancelBtn" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                Width="75" 
+                Content="Cancel" 
+                Margin="0,0,10,10" 
+                Click="CancelBtn_Click"/>
+
+        <Button x:Name="OKBtn" 
+                HorizontalAlignment="Right" 
+                VerticalAlignment="Bottom" 
+                Width="75" 
+                Content="OK" 
+                Margin="0,0,90,10" 
+                Click="OKBtn_Click"/>
+    </Grid>
+</platformUI:DialogWindow>
+```
+
+*Add icons and checkboxes for the solution folder in the SolutionWizardDialog.xaml file*
+
+```CSharp
+private bool _sourceFolder;
+private bool _mandatoryFolder;
+private bool _optionalFolder;
+```
+
+*Add new fileds to the SolutionWizard class to store values from the SolutionWizardDialog*
+
+```CSharp
+_sourceFolder = (bool)dialog.SourceFolderCbx.IsChecked;
+_mandatoryFolder = (bool)dialog.MandatoryProjectSolutionFolderCbx.IsChecked;
+_optionalFolder = (bool)dialog.OptionalProjectSolutionFolderCbx.IsChecked;
+```
+
+*Store the values from the SolutionWizardDialog in the new fileds in the RunStarted method in the SolutionWizard class*
+
+```CSharp
+private Project AddProject(string projectSufix, string templateName, SolutionFolder sourceSolutionFolder = null, string folderName = null)
+{
+    string destination = _replacementsDictionary["$destinationdirectory$"];
+
+    if (_sourceFolder)
+    {
+        destination = Path.Combine(destination, "Source");
+    }
+
+    var projectName = $"{_replacementsDictionary["$safeprojectname$"]}.{projectSufix}";
+
+    Project project;
+    if (sourceSolutionFolder == null)
+    {
+        if (folderName != null)
+        {
+            SolutionFolder optionalFolder = _dte.Solution.AddSolutionFolderEx(folderName);
+            project = optionalFolder.AddProject(destination, projectName, templateName);
+        }
+        else
+        {
+            project = _dte.Solution.AddProject(destination, projectName, templateName);
+        }
+    }
+    else
+    {
+        if (folderName != null)
+        {
+            SolutionFolder folder = (SolutionFolder)sourceSolutionFolder.AddSolutionFolderEx(folderName);
+            project = folder.AddProject(destination, projectName, templateName);
+        }
+        else
+        {
+            project = sourceSolutionFolder.AddProject(destination, projectName, templateName);
+        }
+    }
+
+    return project;
+}
+```
+
+*Add a new private method called AddProject that handles the project creation logic in the SolutionWizard class*
+
+```CSharp
+public void RunFinished()
+{
+    string destination = _replacementsDictionary["$destinationdirectory$"];
+    string fileName = _replacementsDictionary["$safeprojectname$"] + ".sln";
+    _dte.Solution.SaveAs(Path.Combine(destination, fileName));
+
+    SolutionFolder sourceSolutionFolder = null;
+    if (_sourceFolder)
+        sourceSolutionFolder = _dte.Solution.AddSolutionFolderEx("Source");
+
+    string mandatoryFolderName = null;
+    if (_mandatoryFolder)
+        mandatoryFolderName = "Mandatory";
+
+    string optionalFolderName = null;
+    if (_optionalFolder)
+        optionalFolderName = "Optional";
+
+
+    Project mandatoryPproject = AddProject("Mandatory", "ProjectTemplateTutorial.Mandatory", sourceSolutionFolder, mandatoryFolderName);
+    mandatoryPproject.SetResponsibility(ProjectResponsibilities.Mandatory);
+
+    Project mandatoryPproject2 = AddProject("Mandatory2", "ProjectTemplateTutorial.Mandatory", sourceSolutionFolder, mandatoryFolderName);
+    mandatoryPproject2.SetResponsibility(ProjectResponsibilities.Mandatory);
+
+    if (_addOptionalProject)
+    {
+        Project optionalProject = AddProject("Optional", "ProjectTemplateTutorial.Optional", sourceSolutionFolder, optionalFolderName);
+        optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
+        optionalProject.InstallNuGetPackage("Newtonsoft.Json");
+        optionalProject.AddItem("ProjectTemplateTutorial.ItemTemplate", "Json1.jc");
+    }
+}
+```
+
+*Change the RunFinished method in the SolutionWizard class sp that it uses the new AddProject method*
  
 ### AddReference
 
