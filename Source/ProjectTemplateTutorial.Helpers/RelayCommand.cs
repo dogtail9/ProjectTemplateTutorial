@@ -1,18 +1,14 @@
-﻿//------------------------------------------------------------------------------
-// <copyright file="RelayCommand.cs" company="Company">
-//     Copyright (c) Company.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-
+﻿using Microsoft.VisualStudio.Shell;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Globalization;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ProjectTemplateTutorial.VSIXProject.Commands
+namespace ProjectTemplateTutorial.Helpers
 {
-    internal sealed class RelayCommand
+    public class RelayCommand
     {
         private readonly Package package;
 

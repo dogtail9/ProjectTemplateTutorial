@@ -1341,7 +1341,7 @@ We will implement our help library as extension methods for the Visual Studio AP
 
 ![Create blank solution](Images/0090_HelperLibrary/0025.PNG)
 
-*Add the Microsoft.VisualStudio.Shell.14 NuGet package to the Helper project*
+*Add the Microsoft.VisualStudio.Shell.14.0 NuGet package to the Helper project*
 
 ![Create blank solution](Images/0090_HelperLibrary/0028.PNG)
 
@@ -1497,14 +1497,7 @@ public enum ProjectResponsibilities
 *Keep only the ProjectResponsibilities enum*
 
 ### SolutionWizard
-
-
 Delete the AddProject and the InstallNuGetPackage methods int the SolutionWizard class.
-
-
-
-
-
 
 ```CSharp
 public void RunFinished()
@@ -1929,3 +1922,40 @@ $"Installing {packageName} NuGet package, this may take a minute...".ShowStatusB
 ![Create blank solution](Images/0090_HelperLibrary/0040.PNG)
 
 *Visual Studio telling the user that the Newtonsoft.Json NuGet package is added*
+
+### Move the RelayCommand class to the Helper project
+![Create blank solution](Images/0090_HelperLibrary/0080.PNG)
+
+*Add a reference to System.Design in the Helpers project*
+
+![Create blank solution](Images/0090_HelperLibrary/0090.PNG)
+
+*Add a reference to Microsoft.Shell.Interop.{10.0, 11.0, 12.0} in the Helpers project*
+
+```Csharp
+public class RelayCommand
+{
+    private readonly Package package;
+
+    public RelayCommand(Package package, int commandId, Guid commandSet, Action<object, EventArgs> menuCallback, Action<object, EventArgs> beforeQueryStatus = null)
+    {
+        this.package = package;
+
+        OleMenuCommandService commandService = ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+        if (commandService != null)
+        {
+            var MenuCommandID = new CommandID(commandSet, commandId);
+            var MenuItem = new OleMenuCommand(menuCallback.Invoke, MenuCommandID);
+            if (beforeQueryStatus != null)
+            {
+                MenuItem.BeforeQueryStatus += beforeQueryStatus.Invoke;
+            }
+            commandService.AddCommand(MenuItem);
+        }
+    }
+
+    private IServiceProvider ServiceProvider => this.package;
+}
+```
+
+*Move the RelayCommand class to the Helper project*
