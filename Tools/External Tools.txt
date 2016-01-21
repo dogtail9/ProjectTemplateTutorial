@@ -1,0 +1,2 @@
+http://pandoc.org/
+pandoc README.md -o README.docx
