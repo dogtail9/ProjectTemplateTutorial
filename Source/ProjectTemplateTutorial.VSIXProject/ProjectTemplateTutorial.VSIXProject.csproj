@@ -52,7 +52,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Commands\ProjectResponsibilities.cs" />
-    <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Commands\RelayCommandPackage.cs" />
     <Compile Include="Commands\RelayCommandPackage1.cs">
       <AutoGen>True</AutoGen>
