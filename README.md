@@ -1930,7 +1930,7 @@ $"Installing {packageName} NuGet package, this may take a minute...".ShowStatusB
 
 ![Create blank solution](Images/0090_HelperLibrary/0090.PNG)
 
-*Add a reference to Microsoft.Shell.Interop.{10.0, 11.0, 12.0} in the Helpers project*
+*Add a references to Microsoft.Shell.Interop.{10.0, 11.0, 12.0} in the Helpers project*
 
 ```Csharp
 public class RelayCommand
