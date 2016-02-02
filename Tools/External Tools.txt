@@ -1,3 +1,8 @@
 http://pandoc.org/
 pandoc README.md -o README.docx
 pandoc README.md -f markdown -t html -s -o README.html
+pandoc README.md -f markdown -t html -s --highlight-style kate -o README.html
+
+
+pandoc README.md --highlight-style pygments -o README.docx
+pandoc README.md -f markdown -t html -s --highlight-style pygments -o README.html

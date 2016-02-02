@@ -1,4 +1,3 @@
-#TeSTsddfs
 # Project Template Tutorial
 This is a tutorial on how to create a project template for Visual Studio with multiple projects, commands, dialogs and external tools.
 The project template will have a mandatory and an optional project that you can choose from a dialog when the project is created.
