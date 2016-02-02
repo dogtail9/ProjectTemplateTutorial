@@ -1,3 +1,4 @@
+#TeSTsddfs
 # Project Template Tutorial
 This is a tutorial on how to create a project template for Visual Studio with multiple projects, commands, dialogs and external tools.
 The project template will have a mandatory and an optional project that you can choose from a dialog when the project is created.
@@ -94,7 +95,7 @@ You also need to sign all projects in the solution.
 
 *Add the references to envdte and Microsoft.VisualStudio.TemplateWizardInterface in the VSIXProject*
 
-```CSharp
+```cs
 using Microsoft.VisualStudio.TemplateWizard;
 using System;
 using System.Collections.Generic;
@@ -204,7 +205,7 @@ We want to hide this project template in the New Project dialog and add the proj
 
 Let's write the code to add the mandatory project to the solution. Visual Studio passes a dictionary with data from the New Project dialog to the wizard. We need to save this data and use it to create the mandatory project from our mandatory project template. 
 
-```CSharp
+```cs
 private Dictionary<string, string> _replacementsDictionary = new Dictionary<string, string>();
 DTE _dte;
 
@@ -216,7 +217,7 @@ public SolutionWizard()
 
 *Add a constructor and fields to the SolutionWizard class*
 
-```CSharp
+```cs
 public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
 {
     _replacementsDictionary = replacementsDictionary;
@@ -225,7 +226,7 @@ public void RunStarted(object automationObject, Dictionary<string, string> repla
 
 *Store the replacementsDictionary in the field in the RunStarted method*
 
-```CSharp
+```cs
 public void RunFinished()
 {
     string destination = _replacementsDictionary["$destinationdirectory$"];
@@ -243,11 +244,11 @@ public void RunFinished()
 
 We will use the DTE object to add the project to our solution. Later we will refactor this method to a helper library so we can reuse it in other project templates but for now just put the AddProject method in the SolusionWizard class. 
 
-```CSharp
+```cs
 private void AddProject(string destination, string projectName, string templateName)
 {
     string projectPath = Path.Combine(destination, projectName);
-    string templatePath = ((Solution4)_dte.Solution).GetProjectTemplate(templateName, "CSharp");
+    string templatePath = ((Solution4)_dte.Solution).GetProjectTemplate(templateName, "cs");
 
     _dte.Solution.AddFromTemplate(templatePath, projectPath, projectName, false);
 }
@@ -263,7 +264,7 @@ Let's try the project template to see it the mandatory project is created.
 
 You can also add projects and use the build in project template if you like. You find the build in project templates in the *C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\ProjectTemplate*s folder.
 
-```CSharp
+```cs
 projectName = $"{_replacementsDictionary["$safeprojectname$"]}.WCFServiceLibrary";
 AddProject(destination, projectName, "WcfServiceLibrary");
 ```
@@ -399,7 +400,7 @@ We need some images to for our SolutionWizardDialog. Use the Image Export Monike
 
 *The XAML in the SolutionWizardDialog.xaml file*
 
-```CSharp
+```cs
 public partial class SolutionWizardDialog : DialogWindow
 {
     public SolutionWizardDialog(string safeProjectName)
@@ -429,7 +430,7 @@ public partial class SolutionWizardDialog : DialogWindow
 
 Let's open the dialog window when we create our project.
 
-```CSharp
+```cs
 SolutionWizardDialog dialog = new SolutionWizardDialog(_replacementsDictionary["$safeprojectname$"]);
 var result = dialog.ShowModal();
 
@@ -445,7 +446,7 @@ else
 
 *Open the dialog in the RunStarted method of the SolutionWizard class and save the value of the checkbox in the _addOptionalProject field*
 
-```CSharp
+```cs
 if (_addOptionalProject)
 {
     projectName = $"{_replacementsDictionary["$safeprojectname$"]}.Optional";
@@ -484,7 +485,7 @@ Later in this tutorial we will refactor this method and the AppProject method to
 
 ### Install NuGet packages
 
-```CSharp
+```cs
 private bool InstallNuGetPackage(string projectName, string package)
 {
     bool installedPkg = true;
@@ -517,7 +518,7 @@ private bool InstallNuGetPackage(string projectName, string package)
 
 *Code that adds a NuGet package to a project*
 
-```CSharp
+```cs
  InstallNuGetPackage(projectName, "Newtonsoft.Json");
 ```
 
@@ -663,7 +664,7 @@ We will create the reusable command class RelayCommand that takes a delegate as 
 
 *Add the hirarcy of all symbols to place the button in the context menu and the context menu in the contextmenu for the project node in the solution explorer*
 
-```CSharp
+```cs
 internal sealed class RelayCommand
 {
     private readonly Package package;
@@ -691,13 +692,13 @@ internal sealed class RelayCommand
 
 *Implement the RelayCommand*
 
-```CSharp
+```cs
 [ProvideAutoLoad("{f1536ef8-92ec-443c-9ed7-fdadf150da82}")]
 [PackageRegistration(UseManagedResourcesOnly = true)]
 [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
 [ProvideMenuResource("Menus.ctmenu", 1)]
 [Guid(PackageGuids.guidRelayCommandPackageString)]
-[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
+[SuppressMessage("StyleCop.cs.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
 public sealed class RelayCommandPackage : Package
 {
     private RelayCommand addCopyrightCommand;
@@ -747,7 +748,7 @@ public sealed class RelayCommandPackage : Package
 
 ### Implement the Add Copyright Comment command
 
-```Csharp
+```cs
 protected override void Initialize()
 {
     addCopyrightCommand = new RelayCommand(
@@ -768,7 +769,7 @@ protected override void Initialize()
 
 *Change the addCopyrightCommand object initialization*
 
-```CSharp
+```cs
 private void AddCopyrightComment(object sender, EventArgs e)
 {
     DTE dte = GetService(typeof(DTE)) as DTE;
@@ -837,7 +838,7 @@ We need two methods, one that adds the metadata to the project and one that chec
 
 *Add a class named ProjectExtensions to the Commands folder in the VSIXProject, this class will also be moved to the helper library in the next step.*
 
-```CSharp
+```cs
 public static class ProjectExtensions
 {
     public static void SetResponsibility(this Project project, params ProjectResponsibilities[] responsibilities)
@@ -893,11 +894,11 @@ public enum ProjectResponsibilities
 
 *We use an enum for the different metadata values*
 
-```CSharp
+```cs
 private Project AddProject(string destination, string projectName, string templateName)
 {
     string projectPath = Path.Combine(destination, projectName);
-    string templatePath = ((Solution4)_dte.Solution).GetProjectTemplate(templateName, "CSharp");
+    string templatePath = ((Solution4)_dte.Solution).GetProjectTemplate(templateName, "cs");
 
     _dte.Solution.AddFromTemplate(templatePath, projectPath, projectName, false);
 
@@ -911,7 +912,7 @@ private Project AddProject(string destination, string projectName, string templa
 
 *Modify the AddProject method in the SolutionWizard class. The AddFromTemplate always returns null thats why we need to interate through the project to find the newly created project and return it.* 
 
-```CSharp
+```cs
 Project mandatoryPproject = AddProject(destination, projectName, templateName);
 mandatoryPproject.SetResponsibility(ProjectResponsibilities.Mandatory);
 
@@ -948,7 +949,7 @@ optionalProject.SetResponsibility(ProjectResponsibilities.Optional);
 
 *Add the CommandFlags elements to the Button element in the vsct file in the VSIXProject*
 
-```CSharp
+```cs
 addCopyrightCommand = new RelayCommand(
     this,
     PackageIds.AddCopyrightCommand,
@@ -1057,7 +1058,7 @@ Now that we have a item template let's create a custom tool to generate a C# cla
 
 *Add a Runtime Text Tempalte to the Tools folder in the VSIXProject*
 
-```CSharp
+```cs
 <#@ template language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Linq" #>
@@ -1136,7 +1137,7 @@ namespace <#= JsonNamespace #>
 
 *Code to generate a C# class from Json*
 
-```CSharp
+```cs
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Designer.Interfaces;
 using Microsoft.VisualStudio.OLE.Interop;
@@ -1156,9 +1157,9 @@ namespace ProjectTemplateTutorial.VSIXProject.Tools
 {
     [ComVisible(true)]
     [Guid("1263af09-d434-4a54-8c86-4d4000c394ac")]
-    [ProvideObject(typeof(JsonCSharpFileGenerator))]
-    [CodeGeneratorRegistration(typeof(JsonCSharpFileGenerator), "JsonCSharpFileGenerator", "{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}", GeneratesDesignTimeSource = true)]
-    public class JsonCSharpFileGenerator : IVsSingleFileGenerator, IObjectWithSite
+    [ProvideObject(typeof(JsoncsFileGenerator))]
+    [CodeGeneratorRegistration(typeof(JsoncsFileGenerator), "JsoncsFileGenerator", "{FAE04EC1-301F-11D3-BF4B-00C04F79EFBC}", GeneratesDesignTimeSource = true)]
+    public class JsoncsFileGenerator : IVsSingleFileGenerator, IObjectWithSite
     {
         private object site = null;
         private CodeDomProvider codeDomProvider = null;
@@ -1269,10 +1270,10 @@ namespace ProjectTemplateTutorial.VSIXProject.Tools
 }
 ```
 
-*Add the new class JsonCSharpFileGenerator to the tools folder in the VSIXProject*
+*Add the new class JsoncsFileGenerator to the tools folder in the VSIXProject*
 
 ```xml
-<ProjectItem ReplaceParameters="true" TargetFileName="$safeitemname$.jc" CustomTool="JsonCSharpFileGenerator">Json.jc</ProjectItem>
+<ProjectItem ReplaceParameters="true" TargetFileName="$safeitemname$.jc" CustomTool="JsoncsFileGenerator">Json.jc</ProjectItem>
 ```
 
 *Add the CustomTool attribute to the ProjectItem element in the vstemplate file in the item template project*
@@ -1281,7 +1282,7 @@ namespace ProjectTemplateTutorial.VSIXProject.Tools
 
 *The item template now creates a generated C# file*
 
-```CSharp
+```cs
 //------------------------------------------------------------------------------"
 // <auto-generated>");
 //     This code was generated by a tool.");
@@ -1321,8 +1322,8 @@ namespace ProjectTemplateTutorial.Solution1.Optional
 
 *The generated code in the Json1.cs file*
 
-```CSharp
-string templatePath = ((Solution4)_dte.Solution).GetProjectItemTemplate("ProjectTemplateTutorial.ItemTemplate", "CSharp");
+```cs
+string templatePath = ((Solution4)_dte.Solution).GetProjectItemTemplate("ProjectTemplateTutorial.ItemTemplate", "cs");
 optionalProject.ProjectItems.AddFromTemplate(templatePath, "Json1.jc");
 ```
 
@@ -1366,7 +1367,7 @@ We will implement our help library as extension methods for the Visual Studio AP
 
 *Add a reference to the helper library in the VSIXProject*
 
-```Csharp
+```cs
 public static class DteExtensions
 {
 }
@@ -1379,11 +1380,11 @@ Projects are added to Solutions so let's make the Addproject method an extension
 
 
 
-```CSharp
+```cs
 public static Project AddProject(this Solution solution, string destination, string projectName, string templateName)
 {
     string projectPath = Path.Combine(destination, projectName);
-    string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "CSharp");
+    string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "cs");
 
     solution.AddFromTemplate(templatePath, projectPath, projectName, false);
 
@@ -1400,10 +1401,10 @@ public static Project AddProject(this Solution solution, string destination, str
 ### AddItem
 We do not have a method for adding an item to a project so let's add one.
 
-```CSharp
+```cs
 public static void AddItem(this Project project, string itemTemplateName, string itemName)
 {
-    string templatePath = ((Solution4)project.DTE.Solution).GetProjectItemTemplate(itemTemplateName, "CSharp");
+    string templatePath = ((Solution4)project.DTE.Solution).GetProjectItemTemplate(itemTemplateName, "cs");
     project.ProjectItems.AddFromTemplate(templatePath, itemName);
 }
 ```
@@ -1413,7 +1414,7 @@ public static void AddItem(this Project project, string itemTemplateName, string
 ### InstallNuGetPackages
 NuGet packages are added to project so let's make the InstallNuGetPackage en axtension method on the Project class.
 
-```CSharp
+```cs
 public static bool InstallNuGetPackage(this Project project, string packageName)
 {
     bool installedPkg = true;
@@ -1443,7 +1444,7 @@ public static bool InstallNuGetPackage(this Project project, string packageName)
 Resonibilities are properties of a project so let's make it an extension method for the Project class.
 We don't want to hard code the responsibilities present in a project template so let's make the SetResponsibility method generic as well.
 
-```CSharp
+```cs
 public static void SetResponsibility<T>(this Project project, params T[] responsibilities)
 {
     foreach (var res in Enum.GetValues(typeof(T)))
@@ -1464,7 +1465,7 @@ public static void SetResponsibility<T>(this Project project, params T[] respons
 
 *Move the SetResponsibility method to the DteExtensions class and make it a generic method*
 
-```CSharp
+```cs
 public static bool IsProjectResponsible(this Project project, Enum responsibility)
 {
     if (project == null)
@@ -1493,7 +1494,7 @@ public static bool IsProjectResponsible(this Project project, Enum responsibilit
 ### ProjectExtensions
 Delete the ProjectExtensions class and rename the file to ProjectResponsibilities.
 
-```CSharp
+```cs
 public enum ProjectResponsibilities
 {
     Mandatory,
@@ -1506,7 +1507,7 @@ public enum ProjectResponsibilities
 ### SolutionWizard
 Delete the AddProject and the InstallNuGetPackage methods in the SolutionWizard class.
 
-```CSharp
+```cs
 public void RunFinished()
 {
     string destination = _replacementsDictionary["$destinationdirectory$"];
@@ -1538,7 +1539,7 @@ public void RunFinished()
 
 ### RelayCommandPackage
 
-```Csharp
+```cs
 using ProjectTemplateTutorial.Helpers;
 ```
 
@@ -1551,7 +1552,7 @@ Let's add the functionality to handle solution folder in our project template.
 ### GetSolutionFolderEx
 We want to add solutionfolders but first we need to check if they already exists. 
 
-```CSharp
+```cs
 public static SolutionFolder GetSolutionFolderEx(this Solution solution, string folderName)
 {
     Project solutionFolder = (from p in ((Solution2)solution).Projects.OfType<Project>()
@@ -1576,7 +1577,7 @@ public static SolutionFolder GetSolutionFolderEx(this SolutionFolder solutionFol
 ### AddSolutionFolderEx
 Now we are ready to add solution folders to the project template. We need a way to add a solution folder to the root of the solution and a way to add a solution folder to another solutionfolder.
 
-```CSharp
+```cs
 public static SolutionFolder AddSolutionFolderEx(this Solution solution, string folderName)
 {
     SolutionFolder folder = solution.GetSolutionFolderEx(folderName);
@@ -1608,7 +1609,7 @@ public static SolutionFolder AddSolutionFolderEx(this SolutionFolder solutionFol
 Because the method AddFromTemplate always returns null, we need a way to find the newly created project
 Create a new method that we can reuse when we add a project to our solution or a solution folder.
 
-```CSharp
+```cs
 private static Project GetProject(string projectName)
 {
     DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
@@ -1623,11 +1624,11 @@ private static Project GetProject(string projectName)
 
 ### AddProject
 
-```CSharp
+```cs
 public static Project AddProject(this Solution solution, string destination, string projectName, string templateName)
 {
     string projectPath = Path.Combine(destination, projectName);
-    string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "CSharp");
+    string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "cs");
 
     solution.AddFromTemplate(templatePath, projectPath, projectName, false);
 
@@ -1637,7 +1638,7 @@ public static Project AddProject(this Solution solution, string destination, str
 public static Project AddProject(this SolutionFolder solutionFolder, string destination, string projectName, string templateName)
 {
     string projectPath = Path.Combine(destination, projectName);
-    string templatePath = ((Solution4)solutionFolder.DTE.Solution).GetProjectTemplate(templateName, "CSharp");
+    string templatePath = ((Solution4)solutionFolder.DTE.Solution).GetProjectTemplate(templateName, "cs");
 
     solutionFolder.AddFromTemplate(templatePath, projectPath, projectName);
 
@@ -1772,7 +1773,7 @@ public static Project AddProject(this SolutionFolder solutionFolder, string dest
 
 *Add icons and checkboxes for the solution folder in the SolutionWizardDialog.xaml file*
 
-```CSharp
+```cs
 private bool _sourceFolder;
 private bool _mandatoryFolder;
 private bool _optionalFolder;
@@ -1780,7 +1781,7 @@ private bool _optionalFolder;
 
 *Add new fileds to the SolutionWizard class to store values from the SolutionWizardDialog*
 
-```CSharp
+```cs
 _sourceFolder = (bool)dialog.SourceFolderCbx.IsChecked;
 _mandatoryFolder = (bool)dialog.MandatoryProjectSolutionFolderCbx.IsChecked;
 _optionalFolder = (bool)dialog.OptionalProjectSolutionFolderCbx.IsChecked;
@@ -1788,7 +1789,7 @@ _optionalFolder = (bool)dialog.OptionalProjectSolutionFolderCbx.IsChecked;
 
 *Store the values from the SolutionWizardDialog in the new fileds in the RunStarted method in the SolutionWizard class*
 
-```CSharp
+```cs
 private Project AddProject(string projectSufix, string templateName, SolutionFolder sourceSolutionFolder = null, string folderName = null)
 {
     string destination = _replacementsDictionary["$destinationdirectory$"];
@@ -1832,7 +1833,7 @@ private Project AddProject(string projectSufix, string templateName, SolutionFol
 
 *Add a new private method called AddProject that handles the project creation logic in the SolutionWizard class*
 
-```CSharp
+```cs
 public void RunFinished()
 {
     string destination = _replacementsDictionary["$destinationdirectory$"];
@@ -1876,7 +1877,7 @@ public void RunFinished()
 
 *Add a reference to VSLangProj in the Helpers project*
 
-````CSharp
+````cs
 public static void AddReference(this Project project, Project projectToAdd)
 {
     (project.Object as VSProject).References.AddProject(projectToAdd);
@@ -1884,7 +1885,7 @@ public static void AddReference(this Project project, Project projectToAdd)
 ```
 *Add the AddReference method to the DteExtensions class*
 
-```CSharp
+```cs
 mandatoryPproject.AddReference(optionalProject);
 ```
 
@@ -1892,7 +1893,7 @@ mandatoryPproject.AddReference(optionalProject);
  
 ### SetAsStartup
 
-```CSharp
+```cs
 public static void SetAsStartup(this Project project)
 {
     DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
@@ -1902,7 +1903,7 @@ public static void SetAsStartup(this Project project)
 
 *Add the SetAsStartup method to the DteExtensions class*
  
-```CSharp
+```cs
 optionalProject.SetAsStartup();
 ```
 
@@ -1912,7 +1913,7 @@ optionalProject.SetAsStartup();
 If an operation is taking longer then a second it is nice to give the user some feedback about what is happening. 
 In Visual Studio we can do that in the statusbar.
 
-```CSharp
+```cs
 public static void ShowStatusBarMessage(this string message)
 {
     DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
@@ -1922,7 +1923,7 @@ public static void ShowStatusBarMessage(this string message)
 
 *Add the ShowStatusBarMessage method to the DteExtensions class*
 
-```CSharp
+```cs
 $"Installing {packageName} NuGet package, this may take a minute...".ShowStatusBarMessage();
 ```
 
@@ -1941,7 +1942,7 @@ $"Installing {packageName} NuGet package, this may take a minute...".ShowStatusB
 
 *Add a references to Microsoft.Shell.Interop.{10.0, 11.0, 12.0} in the Helpers project*
 
-```Csharp
+```cs
 public class RelayCommand
 {
     private readonly Package package;
