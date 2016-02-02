@@ -1,7 +1,7 @@
 # Project Template Tutorial
 This is a tutorial on how to create a project template for Visual Studio with multiple projects, commands, dialogs and external tools.
-The project template will have a mandatory and an optional project that you can choose from an dialog when the project is created.
-There will also be an item template that uses Text Template Transformation Toolkit (T4) to generate code from an DSL.
+The project template will have a mandatory and an optional project that you can choose from a dialog when the project is created.
+There will also be an item template that uses Text Template Transformation Toolkit (T4) to generate code from a DSL.
 
 ## Step 0 : Prerequisites
 I have the following softwares installed on my machine.
@@ -11,15 +11,17 @@ I have the following softwares installed on my machine.
 * [Extensibility Tools for Visual Studio](https://github.com/madskristensen/ExtensibilityTools)
 * [ILSyp](http://ilspy.net/)
 
-When downloading the code from GitHub you have change the debug settings for the VSIXProject.
-* Start Action : C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\devenv.exe
+If you download the code from GitHub you have to change the debug settings for the VSIXProject to be able to debug.
+
+* Start Action : C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\Common7\\IDE\\devenv.exe
 * Command line arguments: /rootsuffix EXP
 
-![Create blank solution](Images/0000_Pre/0010.PNG)
+![](Images/0000_Pre/0010.PNG)
 
-*Change the debug settings for the VSIXProject when downloading the code from GitHub*
+*Change the debug settings for the VSIXProject when downloaded the code from GitHub*
 
-If you want to skip some parts of the tutorial, you can download the code and start where you want.
+If you want to skip some steps in this tutorial, you can download the code and begin on the following steps
+
 * [Step 2 : Mandatory project template](https://github.com/dogtail9/ProjectTemplateTutorial#step-2--mandatory-project-template)
 * [Step 3 : Optional project template](https://github.com/dogtail9/ProjectTemplateTutorial#step-3--optional-project-template)
 * [Step 4 : NuGet packages](https://github.com/dogtail9/ProjectTemplateTutorial#step-4--nuget-packages)
@@ -28,12 +30,12 @@ If you want to skip some parts of the tutorial, you can download the code and st
 * [Step 7 : Refactor some code to a reusable helper library](https://github.com/dogtail9/ProjectTemplateTutorial#step-7--refactor-some-code-to-a-reusable-helper-library)
 
 ## Step 1 : Create a custom project template
-This is a tutorial on how to create a project template with multiple projects, custom commands and dialogs. We will also add an external tool that generate code from a domain specific language.
+In the first step, we will create a VSIX Project, add a project template with a wizard (the SolutionWizard), where we by code could add other project templates to the solution.
 
 ### Solution
-First we need a solution to add our project to. Open Visual Studio and follow the steps bellow.
+First we need a solution. Open Visual Studio and follow the steps bellow.
 
-![Create blank solution](Images/0010_Solution/0010.PNG)
+![](Images/0010_Solution/0010.PNG)
 
 *Choose the blank solution project template*
 
@@ -42,26 +44,26 @@ Now we have our solution that we can start adding project to.
 ### VSIX Project
 The VSIX project where we will put all logic such as wizards, commands and dialogs. 
 
-![Create blank solution](Images/0020_VSIX/0010.PNG)
+![](Images/0020_VSIX/0010.PNG)
 
 *Add a VSIX Project to the solution*
 
-![Create blank solution](Images/0020_VSIX/0020.PNG)
+![](Images/0020_VSIX/0020.PNG)
 
 *Delete the unnecessary files*
 
-![Create blank solution](Images/0020_VSIX/0030.PNG)
+![](Images/0020_VSIX/0030.PNG)
 
 *Add folders for Commands, Dialogs and Wizards*
 
 ### Solution Project Template
-Now we will add to a project template whose sole purpose is to run a wizard, where we can add the code to create our project.
+Add a project template whose sole purpose is to run a wizard where we can add the code to create our project. I add all my template projects to a solution folder called ProjectTemplates.
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0010.PNG)
+![](Images/0030_SolutionProjectTemplate/0010.PNG)
 
 *Add the solution project template*
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0020.PNG)
+![](Images/0030_SolutionProjectTemplate/0020.PNG)
 
 *Delete the unnecessary files*
 
@@ -74,21 +76,21 @@ Now we will add to a project template whose sole purpose is to run a wizard, whe
 
 *Delete the content of the TemplateContent element in the ProjectTemplateTutorial.Solution.vstemplate file*
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0040.PNG)
+![](Images/0030_SolutionProjectTemplate/0040.PNG)
 
 *Change the type attribute of the VSTemplate element in the vstemplate file to ProjectGroup*
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0100.PNG)
+![](Images/0030_SolutionProjectTemplate/0100.PNG)
 
 *Add a category for the project template in the new project dialog*
 
 
 ### Solution wizard
-Now we need to add a wizard class where the logic for creating our project template.
+Now we need to add a wizard class with the logic for creating our project template.
 Add a class to the Wizard folder in the VSIXProject, name it SolutionWizard. The SolutionWizard class should implement the IWizard interface.
-Sign all projects in the solution.
+You also need to sign all projects in the solution.
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0050.PNG)
+![](Images/0030_SolutionProjectTemplate/0050.PNG)
 
 *Add the references to envdte and Microsoft.VisualStudio.TemplateWizardInterface in the VSIXProject*
 
@@ -138,16 +140,16 @@ Set a breakpoint in the int i = 0; line in the RunFinished method.
 ### Assets
 The only thing left to do is to add assets to the VSIXProject. Open the source.extension.vsixmanifest file in the VSIXProject. Add the assets below.
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0070.PNG)
+![](Images/0030_SolutionProjectTemplate/0070.PNG)
 
 *Add assembly*
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0080.PNG)
+![](Images/0030_SolutionProjectTemplate/0080.PNG)
 
 *Add project template*
 
 ### Add the wizard to the solution project template
-![Create blank solution](Images/0030_SolutionProjectTemplate/0060.PNG)
+![](Images/0030_SolutionProjectTemplate/0060.PNG)
 
 *I use ILSpy to get the strongname of the ProjectTemplate.VSIXProject.dll*
 
@@ -162,25 +164,25 @@ The only thing left to do is to add assets to the VSIXProject. Open the source.e
 
 Let´s try to create a project with our project template.
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0110.PNG)
+![](Images/0030_SolutionProjectTemplate/0110.PNG)
 
 *The project template is located in the tutorial category in the New Project dialog*
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0120.PNG)
+![](Images/0030_SolutionProjectTemplate/0120.PNG)
 
 *The break point in the RunFinished method should be hit*
 
-![Create blank solution](Images/0030_SolutionProjectTemplate/0130.PNG)
+![](Images/0030_SolutionProjectTemplate/0130.PNG)
 
-*The empty solution created is created*
+*An empty solution is created*
 
-We are done with the first step out of this tutorial.
+We are done with the first step in this tutorial.
 
 ## Step 2 : Mandatory project template
-Let´s add the project template for the mandatory project in our project template.
+Let´s add the project template for the mandatory project.
 If you skiped the first step in this tutorial you can download the code from the [Solution](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
-![Create blank solution](Images/0040_MandatoryProjectTemplate/0010.PNG)
+![](Images/0040_MandatoryProjectTemplate/0010.PNG)
 
 *Add the mandatory project template*
 
@@ -192,11 +194,11 @@ We want to hide this project template in the New Project dialog and add the proj
 
 *Add the Hidden element to the TemplateData element in the ProjectTemplateTutorial.Mandatory.vstemplate file*
 
-![Create blank solution](Images/0040_MandatoryProjectTemplate/0020.PNG)
+![](Images/0040_MandatoryProjectTemplate/0020.PNG)
 
 *Add the mandatory project template as an asset in the VSIXproject* 
 
-![Create blank solution](Images/0040_MandatoryProjectTemplate/0030.PNG)
+![](Images/0040_MandatoryProjectTemplate/0030.PNG)
 
 *Add the Microsoft.VisualStudio.Shell.14.0 NuGet package to the VSIXProject*
 
@@ -212,7 +214,7 @@ public SolutionWizard()
 }
 ```
 
-*Add constructor and fields to the SolutionWizard class*
+*Add a constructor and fields to the SolutionWizard class*
 
 ```CSharp
 public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
@@ -253,9 +255,9 @@ private void AddProject(string destination, string projectName, string templateN
 
 *Code to add the a project to the solution*
 
-Let's try the project template to se that the mandatory project is created.
+Let's try the project template to see it the mandatory project is created.
 
-![Create blank solution](Images/0040_MandatoryProjectTemplate/0040.PNG)
+![](Images/0040_MandatoryProjectTemplate/0040.PNG)
 
 *The mandatory project is created*
 
@@ -268,17 +270,17 @@ AddProject(destination, projectName, "WcfServiceLibrary");
 
 *Add a WCFServiceLibrary to the solution*
 
-![Create blank solution](Images/0040_MandatoryProjectTemplate/0050.PNG)
+![](Images/0040_MandatoryProjectTemplate/0050.PNG)
 
-*The built-in WCFServiceLibrary template is now added to the solution*
+*The project created with the built-in WCFServiceLibrary template is now added to the solution*
 
 We are done with step two of this tutorial. 
 
 ## Step 3 : Optional project template
-Let´s add the project template and a dialog for the optional project in our project template.
+Let´s add the project template and a dialog for the optional project to our project template.
 If you skiped the second step in this tutorial you can download the code from the [Mandatory](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
-![Create blank solution](Images/0050_OptionalProjectTemplate/0010.PNG)
+![](Images/0050_OptionalProjectTemplate/0010.PNG)
 
 *Add the optional project template*
 
@@ -288,16 +290,19 @@ If you skiped the second step in this tutorial you can download the code from th
 
 *Add the Hidden element to the TemplateData element in the ProjectTemplateTutorial.Mandatory.vstemplate file*
 
-![Create blank solution](Images/0050_OptionalProjectTemplate/0020.PNG)
+![](Images/0050_OptionalProjectTemplate/0020.PNG)
 
-*Add the mandatory project template as an asset in the VSIXproject*
+*Add the optional project template as an asset in the VSIXproject*
 
 ### Project creation dialog
-We need a dialog to select the projects to be created.
+We need a dialog to determine which projects should be created. The dialog will be implemented as a WPF window. Obviously, you can use the MVVM or other designs patterns you are comfortable with. We will stick to the simplest possible implementation of the dialog.
 
-![Create blank solution](Images/0050_OptionalProjectTemplate/0030.PNG)
+![](Images/0050_OptionalProjectTemplate/0060.PNG)
+*Add a reference to System.Xaml in the VSIXProject*
 
-*Add a User Control (there is no window item temptale but we will fix this)*
+![](Images/0050_OptionalProjectTemplate/0030.PNG)
+
+*Add a User Control (there is no window item temptale but we will change that)*
 
 We need to change the class from UserControl to a Window class. Visual Studio has a class called DialogWindow in the Microsoft.VisualStudio.PlatformUI namespace that we will use.
 
@@ -305,20 +310,17 @@ We need to change the class from UserControl to a Window class. Visual Studio ha
  xmlns:platformUI="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
 ```
 
-*Add the Microsoft.VisualStudio.PlatformUI namespace to the XAML file*
-
-![Create blank solution](Images/0050_OptionalProjectTemplate/0060.PNG)
-*Add a reference to System.Xaml in the VSIXProject*
+*Add the Microsoft.VisualStudio.PlatformUI namespace in the XAML file*
 
 In the XAML file change the root element from UserControl to platformUI:DialogWindow. In the code behind file change the base class from UserControl to DialogWindow.
 
 We need some images to for our SolutionWizardDialog. Use the Image Export Moniker dialog from the extensibility tools to export images for Solution and CSProjectNode.
 
-![Create blank solution](Images/0050_OptionalProjectTemplate/0040.PNG)
+![](Images/0050_OptionalProjectTemplate/0040.PNG)
 
 *Create a new folder names Resources in the VSIXProject an add the files to that folder*
  
-![Create blank solution](Images/0050_OptionalProjectTemplate/0050.PNG)
+![](Images/0050_OptionalProjectTemplate/0050.PNG)
  
 *Change the Build Action for the image files to Resource*
 
@@ -423,7 +425,7 @@ public partial class SolutionWizardDialog : DialogWindow
 }
 ```
 
-*The code in the code behing file*
+*The C# code in the code behing file*
 
 Let's open the dialog window when we create our project.
 
@@ -454,29 +456,29 @@ if (_addOptionalProject)
 ```
 *Add code to the RunFinished method to add the optional project if the checkbox is checked*
 
-![Create blank solution](Images/0050_OptionalProjectTemplate/0070.PNG)
+![](Images/0050_OptionalProjectTemplate/0070.PNG)
 
 *The SolutionWizardDialog pops up when you create a new project with the project template*
 
-![Create blank solution](Images/0050_OptionalProjectTemplate/0080.PNG)
+![](Images/0050_OptionalProjectTemplate/0080.PNG)
 
 *If the checkbox for the optional project is checked the optional project will be created*
 
 We are done with step three of this tutorial. 
 
 ## Step 4 : NuGet packages
-If we want to add NuGet packages to one or more of our projects we can do that by using the IVsPackageInstallerServices i Visual Studio.
+To add NuGet packages to one or more of our projects we can do that by using the IVsPackageInstallerServices i Visual Studio.
 If you skiped the third step in this tutorial you can download the code from the [Optional](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.  
 
 ### Add NuGet packages
 Add the InstallNuGetPackage method to the SolutionWizard class. 
-In the next step of this tutorial we will refactor this method and the AppProject method to a helper library so we can reuse it in other project templates but for now just put it in the SolusionWizard class.
+Later in this tutorial we will refactor this method and the AppProject method to a helper library so we can reuse it in other project templates but for now just put it in the SolusionWizard class.
 
-![Create blank solution](Images/0060_NuGet/0020.PNG)
+![](Images/0060_NuGet/0020.PNG)
 
 *Add a reference to Microsoft.VisualStudio.ComponentModelHost in the VSIXProject*
 
-![Create blank solution](Images/0060_NuGet/0010.PNG)
+![](Images/0060_NuGet/0010.PNG)
 
 *Add the NuGet.VisualStudio NuGet package to the VSIXProject*
 
@@ -519,28 +521,29 @@ private bool InstallNuGetPackage(string projectName, string package)
  InstallNuGetPackage(projectName, "Newtonsoft.Json");
 ```
 
-*Install the Newtonsoft.Json NuGet package*
+*Install the Newtonsoft.Json NuGet package in the optional project*
 
-![Create blank solution](Images/0060_NuGet/0030.PNG)
+![](Images/0060_NuGet/0030.PNG)
 
 *Newtonsoft.Json is added to the optional project*
 
 We are done with step four of this tutorial.
 
 ## Step 5 : Commands
-Commands are way to implement tools for a particular task in your project template. For example, the developer should be able to create a copyright note in every source code file in a project.
+Commands are the way to implement a particular task in your project template. For example, the developer should be able to create a copyright note in every source code file in a project created with our project template. 
+We will add a new context menu for the project node in the solution explorer. Then we will add some metadata to the project to be able to only show the command for the mandatory project. 
 If you skiped the fourth step in this tutorial you can download the code from the [NuGet](https://github.com/dogtail9/ProjectTemplateTutorial/releases) release and start the tutorial here.
 
 ### RelayCommand
-We will create the reusable command class RelayCommand that takes a delegate as a parameter for eventhandlern.
+We will create the reusable command class RelayCommand that takes a delegate as a parameter for the eventhandlers. Later we will move this class to the helper library as well.
 
-![Create blank solution](Images/0070_Commands/0010.PNG)
+![](Images/0070_Commands/0010.PNG)
 
 *Add the RelayCommand to the Commands folder in the VSIXProject*
 
-![Create blank solution](Images/0070_Commands/0020.PNG)
+![](Images/0070_Commands/0020.PNG)
 
-*Use the Auto-sync VSCT commands feature from the extensibility tools on the vsct file*
+*Use the Auto-sync VSCT commands feature from the extensibility tools for the vsct file*
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -658,7 +661,7 @@ We will create the reusable command class RelayCommand that takes a delegate as 
 </CommandPlacements>
 ```
 
-*Add the hirarcy of all symbols to place the button in the context menu and the context menu in the contextmenu of the project*
+*Add the hirarcy of all symbols to place the button in the context menu and the context menu in the contextmenu for the project node in the solution explorer*
 
 ```CSharp
 internal sealed class RelayCommand
@@ -685,6 +688,8 @@ internal sealed class RelayCommand
     private IServiceProvider ServiceProvider => this.package;
 }
 ```
+
+*Implement the RelayCommand*
 
 ```CSharp
 [ProvideAutoLoad("{f1536ef8-92ec-443c-9ed7-fdadf150da82}")]
@@ -732,11 +737,11 @@ public sealed class RelayCommandPackage : Package
 
 *Initialize the command in the package class. For now the command only shows a message box.*
 
-![Create blank solution](Images/0070_Commands/0030.PNG)
+![](Images/0070_Commands/0030.PNG)
 
 *The command is located in the context menu of the project*
 
-![Create blank solution](Images/0070_Commands/0040.PNG)
+![](Images/0070_Commands/0040.PNG)
 
 *MessageBox shown when the command is tiggered*
 
@@ -814,21 +819,21 @@ private void AddCopyrightComment(object sender, EventArgs e)
 
 *Code to add the copyright text to every C# file in a project*
 
-![Create blank solution](Images/0070_Commands/0060.PNG)
+![](Images/0070_Commands/0060.PNG)
 
 *Copyright comment added to code file*
 
 ### Manage the visibility of the command with metadata in the project file
 The Add Copyright Comment command is visible in all types of projects in Visual Studio. If the command is of a general nature, it is a desired behavior, but if the command is specific to this particular project template we want to hide the command if the project are not created with our project template.
 
-![Create blank solution](Images/0070_Commands/0050.PNG)
+![](Images/0070_Commands/0050.PNG)
 
 *The command is visible on all project types*
 
-Let's add some metadata to the project file for bot of our projects and only show our command if the user right clicks on the Mandatory project.
-We need two methods, one that sets the metadata on the project and one that checks if the project contains a specific value in the metadata.
+Let's add some metadata to the project file for both of our projects and only show our command if the user right clicks on the mandatory project.
+We need two methods, one that adds the metadata to the project and one that checks if the project contains a specific value in the metadata.
 
-![Create blank solution](Images/0070_Commands/0070.PNG)
+![](Images/0070_Commands/0070.PNG)
 
 *Add a class named ProjectExtensions to the Commands folder in the VSIXProject, this class will also be moved to the helper library in the next step.*
 
@@ -876,7 +881,7 @@ public static class ProjectExtensions
 }
 ```
 
-*Code to add and check for metadata in a project*
+*Extension methods for the Project type to add and check for metadata*
 
 ```Charp
 public enum ProjectResponsibilities
@@ -886,7 +891,7 @@ public enum ProjectResponsibilities
 }
 ```
 
-*We use an enum for the diferet values of the project metadata*
+*We use an enum for the different metadata values*
 
 ```CSharp
 private Project AddProject(string destination, string projectName, string templateName)
@@ -961,17 +966,17 @@ addCopyrightCommand = new RelayCommand(
     });
 ```
 
-*Change the command so that it only appears if the project has the Mandatory responsibility*
+*Change the command so that it only appears if the project has the mandatory responsibility*
 
-![Create blank solution](Images/0070_Commands/0080.PNG)
+![](Images/0070_Commands/0080.PNG)
 
 *The Add Copyright Command shows up if you right click the mandatory project*
 
-![Create blank solution](Images/0070_Commands/0090.PNG)
+![](Images/0070_Commands/0090.PNG)
 
 *The Add Copyright Command is hidden if you right click the optional project*
 
-![Create blank solution](Images/0070_Commands/0100.PNG)
+![](Images/0070_Commands/0100.PNG)
 
 *The Add Copyright Command no longer shows up in other project templates*
 
@@ -984,11 +989,11 @@ If you skiped the fifth step in this tutorial you can download the code from the
 ### Item template
 First we need the item template project.
 
-![Create blank solution](Images/0080_ItemTemplate/0010.PNG)
+![](Images/0080_ItemTemplate/0010.PNG)
 
 *Add an item template project to the ProjectTemplates folder*
 
-![Create blank solution](Images/0080_ItemTemplate/0020.PNG)
+![](Images/0080_ItemTemplate/0020.PNG)
 
 *Add the item tempalte project to the assets in the VSIXProject*
 
@@ -1009,7 +1014,7 @@ First we need the item template project.
 </WizardExtension>
 ```
 
-*Add the WizardExtension element to the vstemplate file int the item template project*
+*Add the WizardExtension element to the vstemplate file in the item template project*
 
 ```xml
 <DefaultName>Json.jc</DefaultName>
@@ -1025,30 +1030,30 @@ First we need the item template project.
 
 *Change the TemplateContent element*
 
-![Create blank solution](Images/0080_ItemTemplate/0030.PNG)
+![](Images/0080_ItemTemplate/0030.PNG)
 
 *Set the catergory property of the vstemplate file in the item tempalte project*
 
-![Create blank solution](Images/0080_ItemTemplate/0040.PNG)
+![](Images/0080_ItemTemplate/0040.PNG)
 
 *The item template can be found in the Tutorial category in the New Item dialog*
 
-![Create blank solution](Images/0080_ItemTemplate/0050.PNG)
+![](Images/0080_ItemTemplate/0050.PNG)
 
 *The Json1.jc file is created in the project*
 
 ### T4 (Text Template Transformation Toolkit) Code Generation
 Now that we have a item template let's create a custom tool to generate a C# class from it.
 
-![Create blank solution](Images/0080_ItemTemplate/0070.PNG)
+![](Images/0080_ItemTemplate/0070.PNG)
 
 *Add a reference to Microsoft.VisualStudio.Designer.Interfaces in the VSIXProject*
 
-![Create blank solution](Images/0080_ItemTemplate/0080.PNG)
+![](Images/0080_ItemTemplate/0080.PNG)
 
 *Add the Newtonsoft.Json NuGet package to the VSIXProject*
 
-![Create blank solution](Images/0080_ItemTemplate/0060.PNG)
+![](Images/0080_ItemTemplate/0060.PNG)
 
 *Add a Runtime Text Tempalte to the Tools folder in the VSIXProject*
 
@@ -1264,7 +1269,7 @@ namespace ProjectTemplateTutorial.VSIXProject.Tools
 }
 ```
 
-*Add the new class JsonCSharpFileGenerator to the tolls folder in tthe VSIXProject*
+*Add the new class JsonCSharpFileGenerator to the tools folder in the VSIXProject*
 
 ```xml
 <ProjectItem ReplaceParameters="true" TargetFileName="$safeitemname$.jc" CustomTool="JsonCSharpFileGenerator">Json.jc</ProjectItem>
@@ -1272,7 +1277,7 @@ namespace ProjectTemplateTutorial.VSIXProject.Tools
 
 *Add the CustomTool attribute to the ProjectItem element in the vstemplate file in the item template project*
 
-![Create blank solution](Images/0080_ItemTemplate/0090.PNG)
+![](Images/0080_ItemTemplate/0090.PNG)
 
 *The item template now creates a generated C# file*
 
@@ -1323,9 +1328,11 @@ optionalProject.ProjectItems.AddFromTemplate(templatePath, "Json1.jc");
 
 *Add the item template to the optional project in the SolutionWizard class*
 
-![Create blank solution](Images/0080_ItemTemplate/0100.PNG)
+![](Images/0080_ItemTemplate/0100.PNG)
 
-*The item tempalte is now added to the optional project by default when you create a new project*
+*The item template is now added to the optional project by default when you create a new project*
+
+We are done with the item template step of this tutorial.
  
 ## Step 7 : Refactor some code to a reusable helper library
 Let's clean up our code a bit. We have two methods, AddProject and InstallNuGetPackages in the SolutionWizard class, the RelayCommand class and the ProjectExtensions class that we could reuse in other project templates. 
@@ -1335,27 +1342,27 @@ If you skiped the sixth step in this tutorial you can download the code from the
 ### Create a helper library
 We will implement our help library as extension methods for the Visual Studio API.
 
-![Create blank solution](Images/0090_HelperLibrary/0010.PNG)
+![](Images/0090_HelperLibrary/0010.PNG)
 
 *Start by adding a new class library project*
 
-![Create blank solution](Images/0090_HelperLibrary/0025.PNG)
+![](Images/0090_HelperLibrary/0025.PNG)
 
 *Add the Microsoft.VisualStudio.Shell.14.0 NuGet package to the Helper project*
 
-![Create blank solution](Images/0090_HelperLibrary/0028.PNG)
+![](Images/0090_HelperLibrary/0028.PNG)
 
 *Add the NuGet.VisualStudio NuGet package to the Helper project*
 
-![Create blank solution](Images/0090_HelperLibrary/0026.PNG)
+![](Images/0090_HelperLibrary/0026.PNG)
 
 *Add references to the DTE in the Helper project*
 
-![Create blank solution](Images/0090_HelperLibrary/0027.PNG)
+![](Images/0090_HelperLibrary/0027.PNG)
 
 *Add a reference to Microsoft.VisualStudio.ComponentModelHost in the Helper project*
 
-![Create blank solution](Images/0090_HelperLibrary/0020.PNG)
+![](Images/0090_HelperLibrary/0020.PNG)
 
 *Add a reference to the helper library in the VSIXProject*
 
@@ -1497,7 +1504,7 @@ public enum ProjectResponsibilities
 *Keep only the ProjectResponsibilities enum*
 
 ### SolutionWizard
-Delete the AddProject and the InstallNuGetPackage methods int the SolutionWizard class.
+Delete the AddProject and the InstallNuGetPackage methods in the SolutionWizard class.
 
 ```CSharp
 public void RunFinished()
@@ -1538,6 +1545,7 @@ using ProjectTemplateTutorial.Helpers;
 *Add the using for the helper library to the RelayCommandPackage class*
 
 ### Solution folders
+To be able to group projects that have the same functionality in our solution it may be helpful to add projects to solution folders.
 Let's add the functionality to handle solution folder in our project template.
 
 ### GetSolutionFolderEx
@@ -1597,7 +1605,8 @@ public static SolutionFolder AddSolutionFolderEx(this SolutionFolder solutionFol
 *The AddSolutionFolderEx methods adds a folder to either the solution or another SolutionFolder and returns the newly created SolutionFolder. If the SolutionFolder already exists it will return that SolutionFolder.*
 
 ### GetProject
-Create a new method that we can reuse when we add a project to our solution or to a solution folder.
+Because the method AddFromTemplate always returns null, we need a way to find the newly created project
+Create a new method that we can reuse when we add a project to our solution or a solution folder.
 
 ```CSharp
 private static Project GetProject(string projectName)
@@ -1639,11 +1648,11 @@ public static Project AddProject(this SolutionFolder solutionFolder, string dest
 *Use the GetProject method in the already existing AddProject method. Add a method to add a project to a solution folder*
 ### Update the SolutionWizard
 
-![Create blank solution](Images/0090_HelperLibrary/0060.PNG)
+![](Images/0090_HelperLibrary/0060.PNG)
 
 *Export a new image for the folders and add the file to the Resources folder in the VSIXProject*
 
-![Create blank solution](Images/0090_HelperLibrary/0070.PNG)
+![](Images/0090_HelperLibrary/0070.PNG)
 
 *Change the the Build Action of the FolderOpened.png file to Recource*
 
@@ -1859,11 +1868,11 @@ public void RunFinished()
 }
 ```
 
-*Change the RunFinished method in the SolutionWizard class sp that it uses the new AddProject method*
+*Change the RunFinished method in the SolutionWizard class so that it uses the new AddProject method*
  
 ### AddReference
 
-![Create blank solution](Images/0090_HelperLibrary/0030.PNG)
+![](Images/0090_HelperLibrary/0030.PNG)
 
 *Add a reference to VSLangProj in the Helpers project*
 
@@ -1901,7 +1910,7 @@ optionalProject.SetAsStartup();
 
 ### ShowStatusBarMessage
 If an operation is taking longer then a second it is nice to give the user some feedback about what is happening. 
-In visual Studio you can do that in the statusbar.
+In Visual Studio we can do that in the statusbar.
 
 ```CSharp
 public static void ShowStatusBarMessage(this string message)
@@ -1917,18 +1926,18 @@ public static void ShowStatusBarMessage(this string message)
 $"Installing {packageName} NuGet package, this may take a minute...".ShowStatusBarMessage();
 ```
 
-*Show a message in the statusbar about a nuget package beeing installed*
+*Show a message in the statusbar when a nuget package is being installed*
 
-![Create blank solution](Images/0090_HelperLibrary/0040.PNG)
+![](Images/0090_HelperLibrary/0040.PNG)
 
 *Visual Studio telling the user that the Newtonsoft.Json NuGet package is added*
 
 ### Move the RelayCommand class to the Helper project
-![Create blank solution](Images/0090_HelperLibrary/0080.PNG)
+![](Images/0090_HelperLibrary/0080.PNG)
 
 *Add a reference to System.Design in the Helpers project*
 
-![Create blank solution](Images/0090_HelperLibrary/0090.PNG)
+![](Images/0090_HelperLibrary/0090.PNG)
 
 *Add a references to Microsoft.Shell.Interop.{10.0, 11.0, 12.0} in the Helpers project*
 
