@@ -1605,21 +1605,44 @@ public static SolutionFolder AddSolutionFolderEx(this SolutionFolder solutionFol
 *The AddSolutionFolderEx methods adds a folder to either the solution or another SolutionFolder and returns the newly created SolutionFolder. If the SolutionFolder already exists it will return that SolutionFolder.*
 
 ### GetProject
-Because the method AddFromTemplate always returns null, we need a way to find the newly created project
+Because the method AddFromTemplate always returns null, we need a way to find the newly created project.
 Create a new method that we can reuse when we add a project to our solution or a solution folder.
 
 ```cs
-private static Project GetProject(string projectName)
-{
-    DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
-    Project project = (from Project p in (Array)_dte.ActiveSolutionProjects
-                       where p.Name.Equals(projectName)
-                       select p).FirstOrDefault();
+public static Project GetProject(this Solution solution, string projectName) =>
+    solution.GetAllProjects().Where(p => p.Name.Equals(projectName)).FirstOrDefault();
 
-    return project;
+private static IEnumerable<Project> GetAllProjects(this Solution solution)
+{
+    return solution.Projects
+          .Cast<Project>()
+          .SelectMany(GetChildProjects)
+          .Union(solution.Projects.Cast<Project>())
+          .Where(p => { try { return !string.IsNullOrEmpty(p.FullName); } catch { return false; } });
+}
+
+private static IEnumerable<Project> GetChildProjects(Project parent)
+{
+    try
+    {
+        if (parent.Kind != ProjectKinds.vsProjectKindSolutionFolder && parent.Collection == null)  // Unloaded
+            return Enumerable.Empty<Project>();
+
+        if (!string.IsNullOrEmpty(parent.FullName))
+            return new[] { parent };
+    }
+    catch (COMException)
+    {
+        return Enumerable.Empty<Project>();
+    }
+
+    return parent.ProjectItems
+            .Cast<ProjectItem>()
+            .Where(p => p.SubProject != null)
+            .SelectMany(p => GetChildProjects(p.SubProject));
 }
 ```
-*Get a project by name*
+*Get project by name*
 
 ### AddProject
 
@@ -1627,21 +1650,21 @@ private static Project GetProject(string projectName)
 public static Project AddProject(this Solution solution, string destination, string projectName, string templateName)
 {
     string projectPath = Path.Combine(destination, projectName);
-    string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "cs");
+    string templatePath = ((Solution4)solution).GetProjectTemplate(templateName, "CSharp");
 
     solution.AddFromTemplate(templatePath, projectPath, projectName, false);
 
-    return GetProject(projectName);
+    return solution.GetProject(projectName);
 }
 
 public static Project AddProject(this SolutionFolder solutionFolder, string destination, string projectName, string templateName)
 {
     string projectPath = Path.Combine(destination, projectName);
-    string templatePath = ((Solution4)solutionFolder.DTE.Solution).GetProjectTemplate(templateName, "cs");
+    string templatePath = ((Solution4)solutionFolder.DTE.Solution).GetProjectTemplate(templateName, "CSharp");
 
     solutionFolder.AddFromTemplate(templatePath, projectPath, projectName);
 
-    return GetProject(projectName);
+    return solutionFolder.DTE.Solution.GetProject(projectName);
 }
 ```
 
@@ -1968,3 +1991,7 @@ public class RelayCommand
 ```
 
 *Move the RelayCommand class to the Helper project*
+
+## Summary
+You now completed the tutorial on how to create a project template with multiple projects, item templates with a custom tool, dialogs and learned how to implement and show a command in the menus of Visual Studio.
+I hope you find this tutorial usefull. If you want to get the final code just clone the repository.

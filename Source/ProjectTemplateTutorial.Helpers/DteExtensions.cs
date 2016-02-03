@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using VSLangProj;
@@ -71,7 +72,7 @@ namespace ProjectTemplateTutorial.Helpers
 
             solution.AddFromTemplate(templatePath, projectPath, projectName, false);
 
-            return GetProject(projectName);
+            return solution.GetProject(projectName);
         }
 
         public static Project AddProject(this SolutionFolder solutionFolder, string destination, string projectName, string templateName)
@@ -81,7 +82,7 @@ namespace ProjectTemplateTutorial.Helpers
 
             solutionFolder.AddFromTemplate(templatePath, projectPath, projectName);
 
-            return GetProject(projectName);
+            return solutionFolder.DTE.Solution.GetProject(projectName);
         }
 
         public static void AddItem(this Project project, string itemTemplateName, string itemName)
@@ -166,14 +167,37 @@ namespace ProjectTemplateTutorial.Helpers
             return false;
         }
 
-        private static Project GetProject(string projectName)
-        {
-            DTE _dte = ServiceProvider.GlobalProvider.GetService(typeof(DTE)) as DTE;
-            Project project = (from Project p in (Array)_dte.ActiveSolutionProjects
-                               where p.Name.Equals(projectName)
-                               select p).FirstOrDefault();
+        public static Project GetProject(this Solution solution, string projectName) =>
+            solution.GetAllProjects().Where(p => p.Name.Equals(projectName)).FirstOrDefault();
 
-            return project;
+        private static IEnumerable<Project> GetAllProjects(this Solution solution)
+        {
+            return solution.Projects
+                  .Cast<Project>()
+                  .SelectMany(GetChildProjects)
+                  .Union(solution.Projects.Cast<Project>())
+                  .Where(p => { try { return !string.IsNullOrEmpty(p.FullName); } catch { return false; } });
+        }
+
+        private static IEnumerable<Project> GetChildProjects(Project parent)
+        {
+            try
+            {
+                if (parent.Kind != ProjectKinds.vsProjectKindSolutionFolder && parent.Collection == null)  // Unloaded
+                    return Enumerable.Empty<Project>();
+
+                if (!string.IsNullOrEmpty(parent.FullName))
+                    return new[] { parent };
+            }
+            catch (COMException)
+            {
+                return Enumerable.Empty<Project>();
+            }
+
+            return parent.ProjectItems
+                    .Cast<ProjectItem>()
+                    .Where(p => p.SubProject != null)
+                    .SelectMany(p => GetChildProjects(p.SubProject));
         }
     }
 }
