@@ -1899,7 +1899,7 @@ public void RunFinished()
 
 *Add a reference to VSLangProj in the Helpers project*
 
-````cs
+```cs
 public static void AddReference(this Project project, Project projectToAdd)
 {
     (project.Object as VSProject).References.AddProject(projectToAdd);
